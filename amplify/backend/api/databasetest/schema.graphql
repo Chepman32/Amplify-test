@@ -1,6 +1,16 @@
-type Note @model @auth(rules: [ { allow: public } ] ){
+type Note @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String!
   description: String
   image: String
 }
+
+type Car @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  make: String!
+  model: String!
+  year: Int!
+  price: Int!
+  auctionEndTime: AWSDateTime!
+}
+ 

@@ -49,3 +49,57 @@ export const deleteNote = /* GraphQL */ `
     }
   }
 `;
+export const createCar = /* GraphQL */ `
+  mutation CreateCar(
+    $input: CreateCarInput!
+    $condition: ModelCarConditionInput
+  ) {
+    createCar(input: $input, condition: $condition) {
+      id
+      make
+      model
+      year
+      price
+      auctionEndTime
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateCar = /* GraphQL */ `
+  mutation UpdateCar(
+    $input: UpdateCarInput!
+    $condition: ModelCarConditionInput
+  ) {
+    updateCar(input: $input, condition: $condition) {
+      id
+      make
+      model
+      year
+      price
+      auctionEndTime
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteCar = /* GraphQL */ `
+  mutation DeleteCar(
+    $input: DeleteCarInput!
+    $condition: ModelCarConditionInput
+  ) {
+    deleteCar(input: $input, condition: $condition) {
+      id
+      make
+      model
+      year
+      price
+      auctionEndTime
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;

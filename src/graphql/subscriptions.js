@@ -40,3 +40,48 @@ export const onDeleteNote = /* GraphQL */ `
     }
   }
 `;
+export const onCreateCar = /* GraphQL */ `
+  subscription OnCreateCar($filter: ModelSubscriptionCarFilterInput) {
+    onCreateCar(filter: $filter) {
+      id
+      make
+      model
+      year
+      price
+      auctionEndTime
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateCar = /* GraphQL */ `
+  subscription OnUpdateCar($filter: ModelSubscriptionCarFilterInput) {
+    onUpdateCar(filter: $filter) {
+      id
+      make
+      model
+      year
+      price
+      auctionEndTime
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteCar = /* GraphQL */ `
+  subscription OnDeleteCar($filter: ModelSubscriptionCarFilterInput) {
+    onDeleteCar(filter: $filter) {
+      id
+      make
+      model
+      year
+      price
+      auctionEndTime
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;

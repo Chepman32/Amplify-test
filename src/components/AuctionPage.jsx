@@ -33,16 +33,19 @@ const App = ({ signOut }) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const fetchCars = async () => {
-      const carData = await client.graphql({ query: listCars });
-      console.log("carData", carData);
-      const carList = carData.data.listCars;
-
-      setCars(carList.items);
-    };
-    
     fetchCars();
   }, []);
+
+  const fetchCars = async () => {
+    try {
+        const carData = await client.query({ query: listCars });
+        console.log("carData", carData)
+      const carList = carData.data.listCars.items;
+      setCars(carList);
+    } catch (error) {
+      console.error('Error fetching cars:', error);
+    }
+  };
 
   const handleBidClick = (car) => {
     console.log(`Bid placed for ${car.make} ${car.model}`);

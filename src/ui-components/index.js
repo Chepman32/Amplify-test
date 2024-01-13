@@ -4,6 +4,8 @@
  * Any changes to this file will be overwritten when running amplify pull. *
  **************************************************************************/
 
+export { default as CarCreateForm } from "./CarCreateForm";
+export { default as CarUpdateForm } from "./CarUpdateForm";
 export { default as NoteCreateForm } from "./NoteCreateForm";
 export { default as NoteUpdateForm } from "./NoteUpdateForm";
 export { default as studioTheme } from "./studioTheme";
