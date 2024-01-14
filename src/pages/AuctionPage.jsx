@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
 import "@aws-amplify/ui-react/styles.css";
 import { Button, Flex, Heading, Text, View, withAuthenticator } from "@aws-amplify/ui-react";
 import { generateClient } from 'aws-amplify/api';
-import * as mutations from './graphql/mutations';
-import AuctionPage from "./pages/AuctionPage";
+import * as mutations from '../graphql/mutations';
 
 const client = generateClient();
 
@@ -23,9 +21,8 @@ const listCars = `
   }
 `;
 
-const App = ({ signOut }) => {
+const AuctionPage = ({ signOut }) => {
   const [cars, setCars] = useState([]);
-  const [selectedCar, setSelectedCar] = useState(null);
 
   useEffect(() => {
     fetchCars();
@@ -60,8 +57,19 @@ const App = ({ signOut }) => {
   
 
   return (
-    <AuctionPage/>
+    <View className="App">
+      <Heading level={1}>Virtual Car Auction</Heading>
+      {cars.map((car) => (
+        <Flex key={car.id} direction="column" marginY="2">
+          <Text>{car.make} {car.model}</Text>
+          <Text>Year: {car.year}</Text>
+          <Text>Price: ${car.price}</Text>
+          <Button onClick={() => handleBidClick(car)}>Place Bid</Button>
+        </Flex>
+      ))}
+      <Button onClick={signOut}>Sign Out</Button>
+    </View>
   );
 };
 
-export default withAuthenticator(App);
+export default withAuthenticator(AuctionPage);
