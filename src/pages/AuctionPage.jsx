@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "@aws-amplify/ui-react/styles.css";
-import { Button, Flex, Heading, Text, View, withAuthenticator } from "@aws-amplify/ui-react";
+import { Button, Card, Col, Row, Typography, Space, Spin } from "antd";
+import { withAuthenticator } from "@aws-amplify/ui-react";
 import { generateClient } from 'aws-amplify/api';
 import * as mutations from '../graphql/mutations';
 
@@ -23,6 +24,7 @@ const listCars = `
 
 const AuctionPage = ({ signOut }) => {
   const [cars, setCars] = useState([]);
+  const [loadingBid, setLoadingBid] = useState(false);
 
   useEffect(() => {
     fetchCars();
@@ -36,6 +38,7 @@ const AuctionPage = ({ signOut }) => {
 
   const handleBidClick = async (car) => {
     try {
+      setLoadingBid(true);
       const increasedPrice = Math.ceil(car.price * 1.1); // Increase the price by 10%
       console.log('Increased Price:', increasedPrice);
       await client.graphql({
@@ -47,29 +50,39 @@ const AuctionPage = ({ signOut }) => {
           },
         },
       });
-      fetchCars()
+      fetchCars();
     } catch (e) {
       console.error(e);
       // Handle the error, e.g., display an error message to the user
+    } finally {
+      setLoadingBid(false);
     }
   };
-  
-  
 
   return (
-    <View className="App">
-      <Heading level={1}>Virtual Car Auction</Heading>
-      {cars.map((car) => (
-        <Flex key={car.id} direction="column" marginY="2">
-          <Text>{car.make} {car.model}</Text>
-          <Text>Year: {car.year}</Text>
-          <Text>Price: ${car.price}</Text>
-          <Button onClick={() => handleBidClick(car)}>Place Bid</Button>
-        </Flex>
-      ))}
-      <Button onClick={signOut}>Sign Out</Button>
-    </View>
+    <div style={{ padding: '20px' }}>
+      <Typography.Title level={1} style={{ textAlign: 'center' }}>Virtual Car Auction</Typography.Title>
+      <Row gutter={[16, 16]}>
+        {cars.map((car) => (
+          <Col key={car.id} span={8}>
+            <Card title={`${car.make} ${car.model}`} extra={
+              <Button onClick={() => handleBidClick(car)} disabled={loadingBid}>
+                {loadingBid ? <Spin /> : 'Place Bid'}
+              </Button>
+            }>
+              <Space direction="vertical">
+                <Typography.Text>Year: {car.year}</Typography.Text>
+                <Typography.Text>Price: ${car.price}</Typography.Text>
+              </Space>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Button onClick={signOut}>Sign Out</Button>
+      </div>
+    </div>
   );
 };
 
-export default withAuthenticator(AuctionPage);
+export default AuctionPage;
