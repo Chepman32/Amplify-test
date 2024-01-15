@@ -1,6 +1,66 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const createPlayer = /* GraphQL */ `
+  mutation CreatePlayer(
+    $input: CreatePlayerInput!
+    $condition: ModelPlayerConditionInput
+  ) {
+    createPlayer(input: $input, condition: $condition) {
+      id
+      nickname
+      cars {
+        nextToken
+        __typename
+      }
+      money
+      userId
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updatePlayer = /* GraphQL */ `
+  mutation UpdatePlayer(
+    $input: UpdatePlayerInput!
+    $condition: ModelPlayerConditionInput
+  ) {
+    updatePlayer(input: $input, condition: $condition) {
+      id
+      nickname
+      cars {
+        nextToken
+        __typename
+      }
+      money
+      userId
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deletePlayer = /* GraphQL */ `
+  mutation DeletePlayer(
+    $input: DeletePlayerInput!
+    $condition: ModelPlayerConditionInput
+  ) {
+    deletePlayer(input: $input, condition: $condition) {
+      id
+      nickname
+      cars {
+        nextToken
+        __typename
+      }
+      money
+      userId
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
 export const createNote = /* GraphQL */ `
   mutation CreateNote(
     $input: CreateNoteInput!
@@ -61,6 +121,10 @@ export const createCar = /* GraphQL */ `
       year
       price
       auctionEndTime
+      CarsToPlayers {
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       __typename
@@ -79,6 +143,10 @@ export const updateCar = /* GraphQL */ `
       year
       price
       auctionEndTime
+      CarsToPlayers {
+        nextToken
+        __typename
+      }
       createdAt
       updatedAt
       __typename
@@ -97,6 +165,115 @@ export const deleteCar = /* GraphQL */ `
       year
       price
       auctionEndTime
+      CarsToPlayers {
+        nextToken
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const createCarPlayer = /* GraphQL */ `
+  mutation CreateCarPlayer(
+    $input: CreateCarPlayerInput!
+    $condition: ModelCarPlayerConditionInput
+  ) {
+    createCarPlayer(input: $input, condition: $condition) {
+      id
+      playerId
+      carId
+      player {
+        id
+        nickname
+        money
+        userId
+        createdAt
+        updatedAt
+        __typename
+      }
+      car {
+        id
+        make
+        model
+        year
+        price
+        auctionEndTime
+        createdAt
+        updatedAt
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateCarPlayer = /* GraphQL */ `
+  mutation UpdateCarPlayer(
+    $input: UpdateCarPlayerInput!
+    $condition: ModelCarPlayerConditionInput
+  ) {
+    updateCarPlayer(input: $input, condition: $condition) {
+      id
+      playerId
+      carId
+      player {
+        id
+        nickname
+        money
+        userId
+        createdAt
+        updatedAt
+        __typename
+      }
+      car {
+        id
+        make
+        model
+        year
+        price
+        auctionEndTime
+        createdAt
+        updatedAt
+        __typename
+      }
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteCarPlayer = /* GraphQL */ `
+  mutation DeleteCarPlayer(
+    $input: DeleteCarPlayerInput!
+    $condition: ModelCarPlayerConditionInput
+  ) {
+    deleteCarPlayer(input: $input, condition: $condition) {
+      id
+      playerId
+      carId
+      player {
+        id
+        nickname
+        money
+        userId
+        createdAt
+        updatedAt
+        __typename
+      }
+      car {
+        id
+        make
+        model
+        year
+        price
+        auctionEndTime
+        createdAt
+        updatedAt
+        __typename
+      }
       createdAt
       updatedAt
       __typename

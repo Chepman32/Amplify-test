@@ -22,7 +22,7 @@ const listCars = `
   }
 `;
 
-const AuctionPage = ({ signOut }) => {
+const AuctionPage = () => {
   const [cars, setCars] = useState([]);
   const [loadingBid, setLoadingBid] = useState(false);
 
@@ -78,9 +78,6 @@ const AuctionPage = ({ signOut }) => {
           </Col>
         ))}
       </Row>
-      <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <Button onClick={signOut}>Sign Out</Button>
-      </div>
     </div>
   );
 };

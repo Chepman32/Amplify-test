@@ -1,67 +1,58 @@
-import React, { useState, useEffect } from "react";
-import "./App.css";
-import "@aws-amplify/ui-react/styles.css";
-import { Button, Flex, Heading, Text, View, withAuthenticator } from "@aws-amplify/ui-react";
+import React from 'react';
+import { Amplify } from 'aws-amplify';
+import AuctionPage from './pages/AuctionPage';
+import { Authenticator } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
+
+import awsExports from './aws-exports';
+import { Hub } from 'aws-amplify/utils';
 import { generateClient } from 'aws-amplify/api';
-import * as mutations from './graphql/mutations';
-import AuctionPage from "./pages/AuctionPage";
+import { listPlayers } from './graphql/queries';
+import { createPlayer } from './graphql/mutations';
+
+const fetchPlayers = async () => {
+  const playersData = await client.graphql({ query: listPlayers });
+  const playersList = playersData.data.listPlayers.items
+  const nicknames = playersList.map(pl => pl.nickname)
+  return nicknames
+};
+
+async function createNewPlayer(userId, username) {
+  const data = {
+    userId,
+    nickname: username,
+    money: 1000,
+  };
+  await client.graphql({
+    query: createPlayer,
+    variables: { input: data },
+  });
+}
 
 const client = generateClient();
 
-const listCars = `
-  query ListCars {
-    listCars {
-      items {
-        id
-        make
-        model
-        year
-        price
-        auctionEndTime
-      }
-    }
+const listener = async (data) => {
+  const playersData = await client.graphql({ query: listPlayers });
+  const playersList = playersData.data.listPlayers.items
+  const nicknames = playersList.map(pl => pl.nickname)
+  const isNewUser = !nicknames.includes(data?.payload?.data?.nickname)
+  if (!isNewUser && data.payload.event === "signedIn" && data?.payload?.data?.userId.length && data?.payload?.data?.username.length) {
+    createNewPlayer(data?.payload?.data?.userId, data?.payload?.data?.username)
   }
-`;
-
-const App = ({ signOut }) => {
-  const [cars, setCars] = useState([]);
-  const [selectedCar, setSelectedCar] = useState(null);
-
-  useEffect(() => {
-    fetchCars();
-  }, []);
-
-  const fetchCars = async () => {
-    const carData = await client.graphql({ query: listCars });
-    const carList = carData.data.listCars;
-    setCars(carList.items);
-  };
-
-  const handleBidClick = async (car) => {
-    try {
-      const increasedPrice = Math.ceil(car.price * 1.1); // Increase the price by 10%
-      console.log('Increased Price:', increasedPrice);
-      await client.graphql({
-        query: mutations.updateCar,
-        variables: {
-          input: {
-            id: car.id,
-            price: increasedPrice,
-          },
-        },
-      });
-      fetchCars()
-    } catch (e) {
-      console.error(e);
-      // Handle the error, e.g., display an error message to the user
-    }
-  };
-  
-  
-
-  return (
-    <AuctionPage/>
-  );
 };
 
-export default withAuthenticator(App);
+Hub.listen('auth', listener);
+Amplify.configure(awsExports);
+
+export default function App() {
+  return (
+    <Authenticator>
+      {({ signOut, user }) => (
+        <main>
+          <AuctionPage/>
+          <button onClick={signOut}>Sign out</button>
+        </main>
+      )}
+    </Authenticator>
+  );
+}
