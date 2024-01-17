@@ -1,6 +1,66 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const createAuction = /* GraphQL */ `
+  mutation CreateAuction(
+    $input: CreateAuctionInput!
+    $condition: ModelAuctionConditionInput
+  ) {
+    createAuction(input: $input, condition: $condition) {
+      id
+      carName
+      player
+      buy
+      minBid
+      currentBid
+      endTime
+      status
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const updateAuction = /* GraphQL */ `
+  mutation UpdateAuction(
+    $input: UpdateAuctionInput!
+    $condition: ModelAuctionConditionInput
+  ) {
+    updateAuction(input: $input, condition: $condition) {
+      id
+      carName
+      player
+      buy
+      minBid
+      currentBid
+      endTime
+      status
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const deleteAuction = /* GraphQL */ `
+  mutation DeleteAuction(
+    $input: DeleteAuctionInput!
+    $condition: ModelAuctionConditionInput
+  ) {
+    deleteAuction(input: $input, condition: $condition) {
+      id
+      carName
+      player
+      buy
+      minBid
+      currentBid
+      endTime
+      status
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
 export const createPlayer = /* GraphQL */ `
   mutation CreatePlayer(
     $input: CreatePlayerInput!
@@ -55,54 +115,6 @@ export const deletePlayer = /* GraphQL */ `
       }
       money
       userId
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const createNote = /* GraphQL */ `
-  mutation CreateNote(
-    $input: CreateNoteInput!
-    $condition: ModelNoteConditionInput
-  ) {
-    createNote(input: $input, condition: $condition) {
-      id
-      name
-      description
-      image
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const updateNote = /* GraphQL */ `
-  mutation UpdateNote(
-    $input: UpdateNoteInput!
-    $condition: ModelNoteConditionInput
-  ) {
-    updateNote(input: $input, condition: $condition) {
-      id
-      name
-      description
-      image
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const deleteNote = /* GraphQL */ `
-  mutation DeleteNote(
-    $input: DeleteNoteInput!
-    $condition: ModelNoteConditionInput
-  ) {
-    deleteNote(input: $input, condition: $condition) {
-      id
-      name
-      description
-      image
       createdAt
       updatedAt
       __typename

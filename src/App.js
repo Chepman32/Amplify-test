@@ -9,14 +9,6 @@ import { Hub } from 'aws-amplify/utils';
 import { generateClient } from 'aws-amplify/api';
 import { listPlayers } from './graphql/queries';
 import { createPlayer } from './graphql/mutations';
-
-const fetchPlayers = async () => {
-  const playersData = await client.graphql({ query: listPlayers });
-  const playersList = playersData.data.listPlayers.items
-  const nicknames = playersList.map(pl => pl.nickname)
-  return nicknames
-};
-
 async function createNewPlayer(userId, username) {
   const data = {
     userId,

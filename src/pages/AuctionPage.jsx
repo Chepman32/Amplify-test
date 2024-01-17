@@ -1,83 +1,203 @@
 import React, { useState, useEffect } from "react";
+import { Hub } from 'aws-amplify/utils';
 import "@aws-amplify/ui-react/styles.css";
-import { Button, Card, Col, Row, Typography, Space, Spin } from "antd";
-import { withAuthenticator } from "@aws-amplify/ui-react";
+import { Modal, Form, Input, Button, Card, Col, Row, Typography, Space, Spin, Flex } from "antd";
 import { generateClient } from 'aws-amplify/api';
 import * as mutations from '../graphql/mutations';
+import { listAuctions as listAuctionsQuery } from '../graphql/queries';
 
 const client = generateClient();
 
-const listCars = `
-  query ListCars {
-    listCars {
-      items {
-        id
-        make
-        model
-        year
-        price
-        auctionEndTime
-      }
-    }
-  }
-`;
-
 const AuctionPage = () => {
-  const [cars, setCars] = useState([]);
+  const [auctions, setAuctions] = useState([]);
+  const [visible, setVisible] = useState(false);
+  const [auctionDuration, setAuctionDuration] = useState(1);
+  const [player, setPlayer] = useState("");
   const [loadingBid, setLoadingBid] = useState(false);
+  const [form] = Form.useForm();
 
-  useEffect(() => {
-    fetchCars();
-  }, []);
-
-  const fetchCars = async () => {
-    const carData = await client.graphql({ query: listCars });
-    const carList = carData.data.listCars;
-    setCars(carList.items);
+  const showModal = () => {
+    setVisible(true);
   };
 
-  const handleBidClick = async (car) => {
+  const handleCancel = () => {
+    setVisible(false);
+  };
+
+  async function createNewAuction() {
+    try {
+      const formData = form.getFieldsValue();
+      const auctionDurationSeconds = auctionDuration * 60 * 60; // Convert auction duration to seconds
+      const currentTimeInSeconds = Math.floor(Date.now() / 1000);
+
+      // Calculate the end time as the sum of current time and auction duration
+      const endTime = currentTimeInSeconds + auctionDurationSeconds;
+
+      const newAuction = {
+        carName: formData.carName,
+        player: player,
+        buy: formData.buy,
+        minBid: formData.minBid,
+        currentBid: formData.currentBid,
+        endTime: endTime,
+        status: "active",
+      };
+
+      await client.graphql({
+        query: mutations.createAuction,
+        variables: { input: newAuction },
+      });
+      listAuctions();
+      setVisible(false);
+    } catch (error) {
+      console.error('Error creating a new auction', error);
+      // Handle the error, e.g., display an error message to the user
+    }
+  }
+
+  const handleOk = () => {
+    try {
+      createNewAuction();
+      setVisible(false);
+    } catch (error) {
+      console.error('Error creating auction', error);
+    }
+  };
+
+  const increaseBid = async (auction) => {
     try {
       setLoadingBid(true);
-      const increasedPrice = Math.ceil(car.price * 1.1); // Increase the price by 10%
-      console.log('Increased Price:', increasedPrice);
+      const increasedBidValue = Math.ceil(auction.currentBid * 1.1) || Math.ceil(auction.minBid * 1.1);
+
+      const updatedAuction = {
+        id: auction.id,
+        carName: auction.carName,
+        player: auction.player,
+        buy: auction.buy,
+        minBid: auction.currentBid || auction.minBid,
+        currentBid: increasedBidValue,
+        endTime: auction.endTime,
+        status: increasedBidValue < auction.buy ? "active" : "finished",
+      };
+
       await client.graphql({
-        query: mutations.updateCar,
-        variables: {
-          input: {
-            id: car.id,
-            price: increasedPrice,
-          },
-        },
+        query: mutations.updateAuction,
+        variables: { input: updatedAuction },
       });
-      fetchCars();
-    } catch (e) {
-      console.error(e);
-      // Handle the error, e.g., display an error message to the user
+
+      listAuctions();
+    } catch (error) {
+      console.error(error);
     } finally {
       setLoadingBid(false);
+    }
+  };
+
+  const buyItem = (auctionId) => {
+    console.log(`Buy item for auction with ID: ${auctionId}`);
+  };
+
+  const listener = async (data) => {
+    const { nickname } = data?.payload?.data;
+    setPlayer(nickname);
+  };
+
+  useEffect(() => {
+    listAuctions();
+    Hub.listen('auth', listener);
+  }, []);
+
+  function calculateTimeDifference(targetTime) {
+    const targetDateTime = new Date(targetTime);
+
+    const currentTime = new Date();
+
+    const timeDifference = Math.floor((targetDateTime - currentTime) / 1000); // in seconds
+
+    if (timeDifference < 60) {
+      return "finishing";
+    } else if (timeDifference < 3600) {
+      const minutes = Math.floor(timeDifference / 60);
+      return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+    } else {
+      const hours = Math.floor(timeDifference / 3600);
+      const remainingMinutes = Math.floor((timeDifference % 3600) / 60);
+      return `${hours} hour${hours > 1 ? 's' : ''} ${remainingMinutes} minute${remainingMinutes > 1 ? 's' : ''}`;
+    }
+  }
+
+  const listAuctions = async () => {
+    try {
+      const auctionData = await client.graphql({ query: listAuctionsQuery });
+      const currentTime = new Date();
+
+      const auctions = auctionData.data.listAuctions.items.map(auction => {
+        const endTime = new Date(parseInt(auction.endTime) * 1000);
+        const timeLeft = calculateTimeDifference(endTime);
+
+        return {
+          ...auction,
+          endTime,
+          timeLeft
+        };
+      });
+
+      setAuctions(auctions);
+    } catch (error) {
+      console.error("Error fetching auctions:", error);
+      // Handle errors appropriately
     }
   };
 
   return (
     <div style={{ padding: '20px' }}>
       <Typography.Title level={1} style={{ textAlign: 'center' }}>Virtual Car Auction</Typography.Title>
+      <Flex justify="center">
+        <Button onClick={showModal}>Start auction</Button>
+      </Flex>
       <Row gutter={[16, 16]}>
-        {cars.map((car) => (
-          <Col key={car.id} span={8}>
-            <Card title={`${car.make} ${car.model}`} extra={
-              <Button onClick={() => handleBidClick(car)} disabled={loadingBid}>
-                {loadingBid ? <Spin /> : 'Place Bid'}
-              </Button>
-            }>
+        {auctions.map((auction) => (
+          <Col key={auction.id} span={8}>
+            <Card title={`${auction.player} - ${auction.carName}`}>
               <Space direction="vertical">
-                <Typography.Text>Year: {car.year}</Typography.Text>
-                <Typography.Text>Price: ${car.price}</Typography.Text>
+                <Typography.Text>End Time: {calculateTimeDifference(auction.endTime)}</Typography.Text>
+                <Typography.Text>{auction.currentBid > auction.minBid ? "Current" : "Minimal"} Bid: ${auction.currentBid || auction.minBid}</Typography.Text>
+                <Typography.Text>Buy: ${auction.buy}</Typography.Text>
+                <Button onClick={() => increaseBid(auction)} disabled={loadingBid}>
+                  {loadingBid ? <Spin /> : "Increase Bid"}
+                </Button>
+                <Button onClick={() => buyItem(auction.id)}>Buy</Button>
               </Space>
             </Card>
           </Col>
         ))}
       </Row>
+      <Modal
+        visible={visible}
+        title="Create a New Auction"
+        okText="Create"
+        cancelText="Cancel"
+        onCancel={handleCancel}
+        onOk={handleOk}
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item name="carName" label="Car Name" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="minBid" label="Minimal bid" rules={[{ required: true }]}>
+            <Input type="number" defaultValue={0} />
+          </Form.Item>
+          <Form.Item name="buy" label="Buy" rules={[{ required: true }]}>
+            <Input type="number" defaultValue={0} />
+          </Form.Item>
+          <Form.Item name="currentBid" label="Current Bid" rules={[{ required: true }]}>
+            <Input type="number" defaultValue={0} />
+          </Form.Item>
+          <Form.Item name="auctionDuration" label="Auction Duration (hours)" rules={[{ required: true }]}>
+            <Input type="number" value={auctionDuration} onChange={(e) => setAuctionDuration(e.target.value)} />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

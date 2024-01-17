@@ -1,6 +1,48 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getAuction = /* GraphQL */ `
+  query GetAuction($id: ID!) {
+    getAuction(id: $id) {
+      id
+      carName
+      player
+      buy
+      minBid
+      currentBid
+      endTime
+      status
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listAuctions = /* GraphQL */ `
+  query ListAuctions(
+    $filter: ModelAuctionFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listAuctions(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        carName
+        player
+        buy
+        minBid
+        currentBid
+        endTime
+        status
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
 export const getPlayer = /* GraphQL */ `
   query GetPlayer($id: ID!) {
     getPlayer(id: $id) {
@@ -30,40 +72,6 @@ export const listPlayers = /* GraphQL */ `
         nickname
         money
         userId
-        createdAt
-        updatedAt
-        __typename
-      }
-      nextToken
-      __typename
-    }
-  }
-`;
-export const getNote = /* GraphQL */ `
-  query GetNote($id: ID!) {
-    getNote(id: $id) {
-      id
-      name
-      description
-      image
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const listNotes = /* GraphQL */ `
-  query ListNotes(
-    $filter: ModelNoteFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listNotes(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        name
-        description
-        image
         createdAt
         updatedAt
         __typename

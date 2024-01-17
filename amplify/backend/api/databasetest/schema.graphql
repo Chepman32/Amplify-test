@@ -1,16 +1,20 @@
+type Auction @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  carName: String!
+  player: String!
+  buy: Int!
+  minBid: Int!
+  currentBid: Int
+  endTime: String!
+  status: String!
+}
+
 type Player @model @auth(rules: [{allow: public}]) {
   id: ID!
   nickname: String
   cars: [Car] @manyToMany(relationName: "CarPlayer")
   money: Int
   userId: String
-}
-
-type Note @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  name: String!
-  description: String
-  image: String
 }
 
 type Car @model @auth(rules: [{allow: public}]) {

@@ -1,6 +1,57 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onCreateAuction = /* GraphQL */ `
+  subscription OnCreateAuction($filter: ModelSubscriptionAuctionFilterInput) {
+    onCreateAuction(filter: $filter) {
+      id
+      carName
+      player
+      buy
+      minBid
+      currentBid
+      endTime
+      status
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateAuction = /* GraphQL */ `
+  subscription OnUpdateAuction($filter: ModelSubscriptionAuctionFilterInput) {
+    onUpdateAuction(filter: $filter) {
+      id
+      carName
+      player
+      buy
+      minBid
+      currentBid
+      endTime
+      status
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteAuction = /* GraphQL */ `
+  subscription OnDeleteAuction($filter: ModelSubscriptionAuctionFilterInput) {
+    onDeleteAuction(filter: $filter) {
+      id
+      carName
+      player
+      buy
+      minBid
+      currentBid
+      endTime
+      status
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
 export const onCreatePlayer = /* GraphQL */ `
   subscription OnCreatePlayer($filter: ModelSubscriptionPlayerFilterInput) {
     onCreatePlayer(filter: $filter) {
@@ -46,45 +97,6 @@ export const onDeletePlayer = /* GraphQL */ `
       }
       money
       userId
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onCreateNote = /* GraphQL */ `
-  subscription OnCreateNote($filter: ModelSubscriptionNoteFilterInput) {
-    onCreateNote(filter: $filter) {
-      id
-      name
-      description
-      image
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onUpdateNote = /* GraphQL */ `
-  subscription OnUpdateNote($filter: ModelSubscriptionNoteFilterInput) {
-    onUpdateNote(filter: $filter) {
-      id
-      name
-      description
-      image
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onDeleteNote = /* GraphQL */ `
-  subscription OnDeleteNote($filter: ModelSubscriptionNoteFilterInput) {
-    onDeleteNote(filter: $filter) {
-      id
-      name
-      description
-      image
       createdAt
       updatedAt
       __typename
