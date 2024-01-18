@@ -12,6 +12,7 @@ export const getAuction = /* GraphQL */ `
       currentBid
       endTime
       status
+      lastBidPlayer
       createdAt
       updatedAt
       __typename
@@ -34,6 +35,7 @@ export const listAuctions = /* GraphQL */ `
         currentBid
         endTime
         status
+        lastBidPlayer
         createdAt
         updatedAt
         __typename

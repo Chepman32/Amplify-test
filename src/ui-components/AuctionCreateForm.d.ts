@@ -29,6 +29,7 @@ export declare type AuctionCreateFormInputValues = {
     currentBid?: number;
     endTime?: string;
     status?: string;
+    lastBidPlayer?: string;
 };
 export declare type AuctionCreateFormValidationValues = {
     carName?: ValidationFunction<string>;
@@ -38,6 +39,7 @@ export declare type AuctionCreateFormValidationValues = {
     currentBid?: ValidationFunction<number>;
     endTime?: ValidationFunction<string>;
     status?: ValidationFunction<string>;
+    lastBidPlayer?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type AuctionCreateFormOverridesProps = {
@@ -49,6 +51,7 @@ export declare type AuctionCreateFormOverridesProps = {
     currentBid?: PrimitiveOverrideProps<TextFieldProps>;
     endTime?: PrimitiveOverrideProps<TextFieldProps>;
     status?: PrimitiveOverrideProps<TextFieldProps>;
+    lastBidPlayer?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type AuctionCreateFormProps = React.PropsWithChildren<{
     overrides?: AuctionCreateFormOverridesProps | undefined | null;

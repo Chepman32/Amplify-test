@@ -30,6 +30,7 @@ export default function AuctionCreateForm(props) {
     currentBid: "",
     endTime: "",
     status: "",
+    lastBidPlayer: "",
   };
   const [carName, setCarName] = React.useState(initialValues.carName);
   const [player, setPlayer] = React.useState(initialValues.player);
@@ -38,6 +39,9 @@ export default function AuctionCreateForm(props) {
   const [currentBid, setCurrentBid] = React.useState(initialValues.currentBid);
   const [endTime, setEndTime] = React.useState(initialValues.endTime);
   const [status, setStatus] = React.useState(initialValues.status);
+  const [lastBidPlayer, setLastBidPlayer] = React.useState(
+    initialValues.lastBidPlayer
+  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setCarName(initialValues.carName);
@@ -47,6 +51,7 @@ export default function AuctionCreateForm(props) {
     setCurrentBid(initialValues.currentBid);
     setEndTime(initialValues.endTime);
     setStatus(initialValues.status);
+    setLastBidPlayer(initialValues.lastBidPlayer);
     setErrors({});
   };
   const validations = {
@@ -57,6 +62,7 @@ export default function AuctionCreateForm(props) {
     currentBid: [],
     endTime: [{ type: "Required" }],
     status: [{ type: "Required" }],
+    lastBidPlayer: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -91,6 +97,7 @@ export default function AuctionCreateForm(props) {
           currentBid,
           endTime,
           status,
+          lastBidPlayer,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -160,6 +167,7 @@ export default function AuctionCreateForm(props) {
               currentBid,
               endTime,
               status,
+              lastBidPlayer,
             };
             const result = onChange(modelFields);
             value = result?.carName ?? value;
@@ -190,6 +198,7 @@ export default function AuctionCreateForm(props) {
               currentBid,
               endTime,
               status,
+              lastBidPlayer,
             };
             const result = onChange(modelFields);
             value = result?.player ?? value;
@@ -224,6 +233,7 @@ export default function AuctionCreateForm(props) {
               currentBid,
               endTime,
               status,
+              lastBidPlayer,
             };
             const result = onChange(modelFields);
             value = result?.buy ?? value;
@@ -258,6 +268,7 @@ export default function AuctionCreateForm(props) {
               currentBid,
               endTime,
               status,
+              lastBidPlayer,
             };
             const result = onChange(modelFields);
             value = result?.minBid ?? value;
@@ -292,6 +303,7 @@ export default function AuctionCreateForm(props) {
               currentBid: value,
               endTime,
               status,
+              lastBidPlayer,
             };
             const result = onChange(modelFields);
             value = result?.currentBid ?? value;
@@ -322,6 +334,7 @@ export default function AuctionCreateForm(props) {
               currentBid,
               endTime: value,
               status,
+              lastBidPlayer,
             };
             const result = onChange(modelFields);
             value = result?.endTime ?? value;
@@ -352,6 +365,7 @@ export default function AuctionCreateForm(props) {
               currentBid,
               endTime,
               status: value,
+              lastBidPlayer,
             };
             const result = onChange(modelFields);
             value = result?.status ?? value;
@@ -365,6 +379,37 @@ export default function AuctionCreateForm(props) {
         errorMessage={errors.status?.errorMessage}
         hasError={errors.status?.hasError}
         {...getOverrideProps(overrides, "status")}
+      ></TextField>
+      <TextField
+        label="Last bid player"
+        isRequired={false}
+        isReadOnly={false}
+        value={lastBidPlayer}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              carName,
+              player,
+              buy,
+              minBid,
+              currentBid,
+              endTime,
+              status,
+              lastBidPlayer: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.lastBidPlayer ?? value;
+          }
+          if (errors.lastBidPlayer?.hasError) {
+            runValidationTasks("lastBidPlayer", value);
+          }
+          setLastBidPlayer(value);
+        }}
+        onBlur={() => runValidationTasks("lastBidPlayer", lastBidPlayer)}
+        errorMessage={errors.lastBidPlayer?.errorMessage}
+        hasError={errors.lastBidPlayer?.hasError}
+        {...getOverrideProps(overrides, "lastBidPlayer")}
       ></TextField>
       <Flex
         justifyContent="space-between"

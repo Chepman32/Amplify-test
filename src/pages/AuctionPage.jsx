@@ -97,10 +97,11 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
         minBid: auction.currentBid || auction.minBid,
         currentBid: increasedBidValue,
         endTime: auction.endTime,
+        lastBidPlayer: playerInfo.nickname,
         status: increasedBidValue < auction.buy ? "active" : "finished",
       };
       
-      setMoney(money - increasedBidValue,);
+      setMoney(money - auction.lastBidPlayer === playerInfo.nickname ? increasedBidValue - auction.currentBid : increasedBidValue);
       
       await client.graphql({
         query: mutations.updateAuction,
@@ -111,7 +112,7 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
         variables: {
           input: {
             id: playerInfo.id,
-            money: money - increasedBidValue  // Remove the { set: ... } structure
+            money: auction.lastBidPlayer === playerInfo.nickname ? money - (increasedBidValue - auction.currentBid) : money - increasedBidValue
           }
         },
       });
@@ -172,7 +173,7 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
                 <Button onClick={() => increaseBid(auction)} disabled={loadingBid}>
                   {loadingBid ? <Spin /> : "Increase Bid"}
                 </Button>
-                <Button onClick={() => buyItem(auction.id)}>Buy</Button>
+                <Button onClick={() => console.log(auction.lastBidPlayer === playerInfo.nickname)}>Buy</Button>
               </Space>
             </Card>
           </Col>
