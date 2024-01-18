@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+// AuctionPage.js
+
+import React, { useState, useEffect, useCallback } from "react";
 import { Hub } from 'aws-amplify/utils';
 import "@aws-amplify/ui-react/styles.css";
 import { Modal, Form, Input, Button, Card, Col, Row, Typography, Space, Spin, Flex } from "antd";
@@ -8,7 +10,7 @@ import { listAuctions as listAuctionsQuery } from '../graphql/queries';
 
 const client = generateClient();
 
-const AuctionPage = () => {
+const AuctionPage = ({ playerInfo, setMoney, money }) => {
   const [auctions, setAuctions] = useState([]);
   const [visible, setVisible] = useState(false);
   const [auctionDuration, setAuctionDuration] = useState(1);
@@ -24,13 +26,32 @@ const AuctionPage = () => {
     setVisible(false);
   };
 
+  const listAuctions = useCallback(async () => {
+    try {
+      const auctionData = await client.graphql({ query: listAuctionsQuery });
+      const auctions = auctionData.data.listAuctions.items.map(auction => {
+        const endTime = new Date(parseInt(auction.endTime) * 1000);
+        const timeLeft = calculateTimeDifference(endTime);
+
+        return {
+          ...auction,
+          endTime,
+          timeLeft
+        };
+      });
+
+      setAuctions(auctions);
+    } catch (error) {
+      console.error("Error fetching auctions:", error);
+    }
+  }, []);
+
   async function createNewAuction() {
     try {
       const formData = form.getFieldsValue();
-      const auctionDurationSeconds = auctionDuration * 60 * 60; // Convert auction duration to seconds
+      const auctionDurationSeconds = auctionDuration * 60 * 60;
       const currentTimeInSeconds = Math.floor(Date.now() / 1000);
 
-      // Calculate the end time as the sum of current time and auction duration
       const endTime = currentTimeInSeconds + auctionDurationSeconds;
 
       const newAuction = {
@@ -51,7 +72,6 @@ const AuctionPage = () => {
       setVisible(false);
     } catch (error) {
       console.error('Error creating a new auction', error);
-      // Handle the error, e.g., display an error message to the user
     }
   }
 
@@ -79,12 +99,23 @@ const AuctionPage = () => {
         endTime: auction.endTime,
         status: increasedBidValue < auction.buy ? "active" : "finished",
       };
-
+      
+      setMoney(money - increasedBidValue,);
+      
       await client.graphql({
         query: mutations.updateAuction,
         variables: { input: updatedAuction },
       });
-
+      await client.graphql({
+        query: mutations.updatePlayer,
+        variables: {
+          input: {
+            id: playerInfo.id,
+            money: money - increasedBidValue  // Remove the { set: ... } structure
+          }
+        },
+      });
+      
       listAuctions();
     } catch (error) {
       console.error(error);
@@ -105,14 +136,12 @@ const AuctionPage = () => {
   useEffect(() => {
     listAuctions();
     Hub.listen('auth', listener);
-  }, []);
+  }, [listAuctions]);
 
   function calculateTimeDifference(targetTime) {
     const targetDateTime = new Date(targetTime);
-
     const currentTime = new Date();
-
-    const timeDifference = Math.floor((targetDateTime - currentTime) / 1000); // in seconds
+    const timeDifference = Math.floor((targetDateTime - currentTime) / 1000);
 
     if (timeDifference < 60) {
       return "finishing";
@@ -125,29 +154,6 @@ const AuctionPage = () => {
       return `${hours} hour${hours > 1 ? 's' : ''} ${remainingMinutes} minute${remainingMinutes > 1 ? 's' : ''}`;
     }
   }
-
-  const listAuctions = async () => {
-    try {
-      const auctionData = await client.graphql({ query: listAuctionsQuery });
-      const currentTime = new Date();
-
-      const auctions = auctionData.data.listAuctions.items.map(auction => {
-        const endTime = new Date(parseInt(auction.endTime) * 1000);
-        const timeLeft = calculateTimeDifference(endTime);
-
-        return {
-          ...auction,
-          endTime,
-          timeLeft
-        };
-      });
-
-      setAuctions(auctions);
-    } catch (error) {
-      console.error("Error fetching auctions:", error);
-      // Handle errors appropriately
-    }
-  };
 
   return (
     <div style={{ padding: '20px' }}>
