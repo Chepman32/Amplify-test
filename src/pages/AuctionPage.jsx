@@ -3,11 +3,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Hub } from 'aws-amplify/utils';
 import "@aws-amplify/ui-react/styles.css";
-import { Modal, Form, Input, Button, Card, Col, Row, Typography, Space, Spin, Flex } from "antd";
+import { Modal, Form, Input, Button, Card, Col, Row, Typography, Space, Spin, Flex, Select } from "antd";
 import { generateClient } from 'aws-amplify/api';
 import * as mutations from '../graphql/mutations';
 import { listAuctions as listAuctionsQuery } from '../graphql/queries';
 
+const { Option } = Select;
 const client = generateClient();
 
 const AuctionPage = ({ playerInfo, setMoney, money }) => {
@@ -59,7 +60,7 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
         player: player,
         buy: formData.buy,
         minBid: formData.minBid,
-        currentBid: formData.currentBid,
+        currentBid: formData.minBid,
         endTime: endTime,
         status: "active",
       };
@@ -87,7 +88,7 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
   const increaseBid = async (auction) => {
     try {
       setLoadingBid(true);
-      const increasedBidValue = Math.ceil(auction.currentBid * 1.1) || Math.ceil(auction.minBid * 1.1);
+      const increasedBidValue = Math.round(auction.currentBid * 1.1) || Math.round(auction.minBid * 1.1);
 
       const updatedAuction = {
         id: auction.id,
@@ -100,9 +101,9 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
         lastBidPlayer: playerInfo.nickname,
         status: increasedBidValue < auction.buy ? "active" : "finished",
       };
-      
-      setMoney(money - auction.lastBidPlayer === playerInfo.nickname ? increasedBidValue - auction.currentBid : increasedBidValue);
-      
+
+      setMoney(auction.lastBidPlayer === playerInfo.nickname ? money - (increasedBidValue - auction.currentBid) : money - increasedBidValue);
+
       await client.graphql({
         query: mutations.updateAuction,
         variables: { input: updatedAuction },
@@ -116,7 +117,7 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
           }
         },
       });
-      
+
       listAuctions();
     } catch (error) {
       console.error(error);
@@ -142,19 +143,22 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
   function calculateTimeDifference(targetTime) {
     const targetDateTime = new Date(targetTime);
     const currentTime = new Date();
-    const timeDifference = Math.floor((targetDateTime - currentTime) / 1000);
-
-    if (timeDifference < 60) {
+    const timeDifferenceInSeconds = Math.floor((targetDateTime - currentTime) / 1000);
+  
+    if (timeDifferenceInSeconds <= 0) {
+      return "finished";
+    } else if (timeDifferenceInSeconds < 60) {
       return "finishing";
-    } else if (timeDifference < 3600) {
-      const minutes = Math.floor(timeDifference / 60);
-      return `${minutes} minute${minutes > 1 ? 's' : ''}`;
+    } else if (timeDifferenceInSeconds < 3600) {
+      const minutes = Math.floor(timeDifferenceInSeconds / 60);
+      return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
     } else {
-      const hours = Math.floor(timeDifference / 3600);
-      const remainingMinutes = Math.floor((timeDifference % 3600) / 60);
-      return `${hours} hour${hours > 1 ? 's' : ''} ${remainingMinutes} minute${remainingMinutes > 1 ? 's' : ''}`;
+      const hours = Math.floor(timeDifferenceInSeconds / 3600);
+      const remainingMinutes = Math.floor((timeDifferenceInSeconds % 3600) / 60);
+      return `${hours} hour${hours !== 1 ? 's' : ''} ${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''}`;
     }
   }
+  
 
   return (
     <div style={{ padding: '20px' }}>
@@ -197,11 +201,14 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
           <Form.Item name="buy" label="Buy" rules={[{ required: true }]}>
             <Input type="number" defaultValue={0} />
           </Form.Item>
-          <Form.Item name="currentBid" label="Current Bid" rules={[{ required: true }]}>
-            <Input type="number" defaultValue={0} />
-          </Form.Item>
           <Form.Item name="auctionDuration" label="Auction Duration (hours)" rules={[{ required: true }]}>
-            <Input type="number" value={auctionDuration} onChange={(e) => setAuctionDuration(e.target.value)} />
+            <Select value={auctionDuration} onChange={(value) => setAuctionDuration(value)}>
+              <Option value={1}>1 hour</Option>
+              <Option value={3}>3 hours</Option>
+              <Option value={6}>6 hours</Option>
+              <Option value={12}>12 hours</Option>
+              <Option value={24}>24 hours</Option>
+            </Select>
           </Form.Item>
         </Form>
       </Modal>
