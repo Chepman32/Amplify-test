@@ -1,15 +1,18 @@
 // CustomHeader.js
-import React, { } from 'react';
-import { Flex, Menu } from 'antd';
+import React from 'react';
+import { Menu } from 'antd';
+import { Link } from 'react-router-dom';
 
-const CustomHeader = ({ nickname, money, user }) => {
+const CustomHeader = () => {
   return (
-    <Flex justify="flex-end">
-      <Menu theme="dark" mode="horizontal" style={{ float: 'right' }}>
-        <Menu.Item key="1" style={{ float: 'right' }}>{user.username}</Menu.Item>
-        <Menu.Item key="2" style={{ float: 'right' }}>{`Money: $${money}`}</Menu.Item>
-      </Menu>
-    </Flex>
+    <Menu theme="dark" mode="horizontal">
+      <Menu.Item key="cars">
+        <Link to="/cars">Cars</Link>
+      </Menu.Item>
+      <Menu.Item key="auctions">
+        <Link to="/auctions">Auctions</Link>
+      </Menu.Item>
+    </Menu>
   );
 };
 

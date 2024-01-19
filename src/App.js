@@ -12,6 +12,8 @@ import { generateClient } from 'aws-amplify/api';
 import { listPlayers } from './graphql/queries';
 import { createPlayer } from './graphql/mutations';
 import CarsPage from './pages/CarsPage';
+import { Route, Routes } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 const client = generateClient();
 
@@ -26,7 +28,6 @@ export default function App() {
   const listPlayersFunc = async () => {
     const playersData = await client.graphql({ query: listPlayers });
     const playersList = playersData.data.listPlayers.items;
-    console.log(playersList);
     setPlayers(playersList);
   };
 
@@ -40,27 +41,29 @@ export default function App() {
       query: createPlayer,
       variables: { input: data },
     });
+
+    // Set the money state immediately after creating a new player
+    setMoney(1000);
   }
 
   useEffect(() => {
-  let isDataFetched = false;
+    let isDataFetched = false;
 
-  const fetchData = async () => {
-    if (!isDataFetched) {
-      !players.length && await listPlayersFunc();
-      isDataFetched = true;
+    const fetchData = async () => {
+      if (!isDataFetched) {
+        !players.length && await listPlayersFunc();
+        isDataFetched = true;
 
-      const currentPlayer = players.find(pl => pl.nickname === nickname);
-      if (currentPlayer) {
-        setPlayerInfo(currentPlayer);
-        setMoney(currentPlayer.money);
+        const currentPlayer = players.find(pl => pl.nickname === nickname);
+        if (currentPlayer) {
+          setPlayerInfo(currentPlayer);
+          setMoney(currentPlayer.money);
+        }
       }
-    }
-  };
+    };
 
-  fetchData();
-}, [nickname, players]);
-
+    fetchData();
+  }, [nickname, players]);
 
   const listener = async (data) => {
     const nicknames = players.map(pl => pl.nickname);
@@ -78,15 +81,19 @@ export default function App() {
   Hub.listen('auth', listener);
 
   return (
-    <Authenticator>
-      {({ signOut, user }) => (
-        <main>
-          <CustomHeader nickname={nickname} money={money} user={user} />
-          <h2>{money} </h2>
-          <AuctionPage playerInfo={playerInfo} setMoney={setMoney} money={money} />
-          <button onClick={signOut}>Sign out</button>
-        </main>
-      )}
-    </Authenticator>
+    <BrowserRouter>
+      <Authenticator>
+        {({ signOut, user }) => (
+          <main>
+            <CustomHeader nickname={nickname} money={money} user={user} />
+            <Routes>
+              <Route path="/cars" element={<CarsPage />} />
+              <Route path="/auctions" element={<AuctionPage />} />
+            </Routes>
+            <button onClick={signOut}>Sign out</button>
+          </main>
+        )}
+      </Authenticator>
+    </BrowserRouter>
   );
 }
