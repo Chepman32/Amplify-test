@@ -1,5 +1,3 @@
-// AuctionPage.js
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Hub } from 'aws-amplify/utils';
 import "@aws-amplify/ui-react/styles.css";
@@ -7,6 +5,7 @@ import { Modal, Form, Input, Button, Card, Col, Row, Typography, Space, Spin, Fl
 import { generateClient } from 'aws-amplify/api';
 import * as mutations from '../graphql/mutations';
 import { listAuctions as listAuctionsQuery } from '../graphql/queries';
+import { calculateTimeDifference } from "../functions"
 
 const { Option } = Select;
 const client = generateClient();
@@ -17,6 +16,7 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
   const [auctionDuration, setAuctionDuration] = useState(1);
   const [player, setPlayer] = useState("");
   const [loadingBid, setLoadingBid] = useState(false);
+  const [loadingBuy, setLoadingBuy] = useState(false);
   const [form] = Form.useForm();
 
   const showModal = () => {
@@ -88,7 +88,7 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
   const increaseBid = async (auction) => {
     try {
       setLoadingBid(true);
-      const increasedBidValue = Math.round(auction.currentBid * 1.1) || Math.round(auction.minBid * 1.1);
+      const increasedBidValue = auction.currentBid ? Math.floor(auction.currentBid * 1.1) || Math.round(auction.minBid * 1.1) : auction.minBid
 
       const updatedAuction = {
         id: auction.id,
@@ -126,8 +126,45 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
     }
   };
 
-  const buyItem = (auctionId) => {
-    console.log(`Buy item for auction with ID: ${auctionId}`);
+  const buyItem = async (auction) => {
+    try {
+      setLoadingBuy(true);
+      const increasedBidValue = Math.round(auction.currentBid * 1.1) || Math.round(auction.minBid * 1.1);
+
+      const updatedAuction = {
+        id: auction.id,
+        carName: auction.carName,
+        player: auction.player,
+        buy: auction.buy,
+        minBid: auction.currentBid || auction.minBid,
+        currentBid: auction.buy,
+        endTime: auction.endTime,
+        lastBidPlayer: playerInfo.nickname,
+        status: "finished",
+      };
+
+      setMoney(auction.lastBidPlayer === playerInfo.nickname ? money - (auction.buy - auction.currentBid) : money - auction.buy);
+
+      await client.graphql({
+        query: mutations.updateAuction,
+        variables: { input: updatedAuction },
+      });
+      await client.graphql({
+        query: mutations.updatePlayer,
+        variables: {
+          input: {
+            id: playerInfo.id,
+            money: auction.lastBidPlayer === playerInfo.nickname ? money - (auction.buy - auction.currentBid) : money - increasedBidValue
+          }
+        },
+      });
+
+      listAuctions();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingBuy(false);
+    }
   };
 
   const listener = async (data) => {
@@ -139,25 +176,6 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
     listAuctions();
     Hub.listen('auth', listener);
   }, [listAuctions]);
-
-  function calculateTimeDifference(targetTime) {
-    const targetDateTime = new Date(targetTime);
-    const currentTime = new Date();
-    const timeDifferenceInSeconds = Math.floor((targetDateTime - currentTime) / 1000);
-  
-    if (timeDifferenceInSeconds <= 0) {
-      return "finished";
-    } else if (timeDifferenceInSeconds < 60) {
-      return "finishing";
-    } else if (timeDifferenceInSeconds < 3600) {
-      const minutes = Math.floor(timeDifferenceInSeconds / 60);
-      return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
-    } else {
-      const hours = Math.floor(timeDifferenceInSeconds / 3600);
-      const remainingMinutes = Math.floor((timeDifferenceInSeconds % 3600) / 60);
-      return `${hours} hour${hours !== 1 ? 's' : ''} ${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''}`;
-    }
-  }
   
 
   return (
@@ -177,7 +195,9 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
                 <Button onClick={() => increaseBid(auction)} disabled={loadingBid}>
                   {loadingBid ? <Spin /> : "Increase Bid"}
                 </Button>
-                <Button onClick={() => console.log(auction.lastBidPlayer === playerInfo.nickname)}>Buy</Button>
+                <Button onClick={() => buyItem(auction)} disabled={loadingBuy} >
+                {loadingBuy ? <Spin /> : "Buy"}
+                </Button>
               </Space>
             </Card>
           </Col>

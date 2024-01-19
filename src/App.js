@@ -11,6 +11,7 @@ import { Hub } from 'aws-amplify/utils';
 import { generateClient } from 'aws-amplify/api';
 import { listPlayers } from './graphql/queries';
 import { createPlayer } from './graphql/mutations';
+import CarsPage from './pages/CarsPage';
 
 const client = generateClient();
 
