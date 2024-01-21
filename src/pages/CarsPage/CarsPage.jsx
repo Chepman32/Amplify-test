@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Typography, Space, Button, Modal, Form, Input, Select, Upload, message } from "antd";
+import { Card, Typography, Space, Button, Modal, Form, Input, Select, Upload, message, Spin } from "antd";
 import { generateClient } from 'aws-amplify/api';
 import { listCars as listCarsQuery } from '../../graphql/queries';
 import * as mutations from '../../graphql/mutations';
@@ -12,6 +12,7 @@ const client = generateClient();
 const CarsPage = ({ playerInfo, setMoney, money }) => {
   const [cars, setCars] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [loadingBuy, setLoadingBuy] = useState(false);
   const [form] = Form.useForm();
 
   const fetchCars = async () => {
@@ -24,7 +25,9 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
   };
 
   const buyCar = async (car) => {
+    setMoney(money - car.price);
     try {
+      setLoadingBuy(true)
       await client.graphql({
         query: mutations.createCarPlayer,
         variables: {
@@ -34,11 +37,24 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
           }
         }
       });
+
+      await client.graphql({
+        query: mutations.updatePlayer,
+        variables: {
+          input: {
+            id: playerInfo.id,
+            money: money - car.price
+          }
+        },
+      });
       message.success('Car successfully bought!');
 
     } catch (err) {
       console.log(err)
       message.error('Error buying car');
+    }
+    finally {
+      setLoadingBuy(false)
     }
   };
 
@@ -94,8 +110,9 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
             <Space direction="horizontal">
             </Space>
             <Button onClick={() => buyCar(car)}>
-              Buy Car
+            {loadingBuy ? <Spin /> : "Buy car"}
             </Button>
+            {car.price}
           </Card>
         ))}
       </div>
