@@ -1,6 +1,40 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getNote = /* GraphQL */ `
+  query GetNote($id: ID!) {
+    getNote(id: $id) {
+      id
+      name
+      description
+      image
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const listNotes = /* GraphQL */ `
+  query ListNotes(
+    $filter: ModelNoteFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listNotes(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        name
+        description
+        image
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
 export const getAuction = /* GraphQL */ `
   query GetAuction($id: ID!) {
     getAuction(id: $id) {
@@ -91,7 +125,6 @@ export const getCar = /* GraphQL */ `
       model
       year
       price
-      auctionEndTime
       CarsToPlayers {
         nextToken
         __typename
@@ -115,7 +148,6 @@ export const listCars = /* GraphQL */ `
         model
         year
         price
-        auctionEndTime
         createdAt
         updatedAt
         __typename
@@ -146,7 +178,6 @@ export const getCarPlayer = /* GraphQL */ `
         model
         year
         price
-        auctionEndTime
         createdAt
         updatedAt
         __typename

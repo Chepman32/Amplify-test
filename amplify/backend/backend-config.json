@@ -49,7 +49,7 @@
     }
   },
   "storage": {
-    "amplifyTestStorage": {
+    "databaseTest": {
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
       "service": "S3"

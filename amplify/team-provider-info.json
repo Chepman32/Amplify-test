@@ -19,7 +19,7 @@
         "databasetest": {}
       },
       "storage": {
-        "amplifyTestStorage": {}
+        "databaseTest": {}
       }
     }
   }

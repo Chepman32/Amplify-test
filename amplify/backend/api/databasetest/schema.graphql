@@ -1,3 +1,10 @@
+type Note @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String
+  description: String
+  image: String
+}
+
 type Auction @model @auth(rules: [{allow: public}]) {
   id: ID!
   carName: String!
@@ -24,7 +31,6 @@ type Car @model @auth(rules: [{allow: public}]) {
   model: String!
   year: Int!
   price: Int!
-  auctionEndTime: AWSDateTime!
   CarsToPlayers: [Player] @manyToMany(relationName: "CarPlayer")
 }
  

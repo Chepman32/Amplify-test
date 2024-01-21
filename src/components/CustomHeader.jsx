@@ -3,7 +3,7 @@ import React from 'react';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
 
-const CustomHeader = () => {
+const CustomHeader = (nickname, user, money) => {
   return (
     <Menu theme="dark" mode="horizontal">
       <Menu.Item key="cars">

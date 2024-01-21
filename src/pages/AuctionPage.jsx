@@ -88,7 +88,7 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
   const increaseBid = async (auction) => {
     try {
       setLoadingBid(true);
-      const increasedBidValue = auction.currentBid ? Math.floor(auction.currentBid * 1.1) || Math.round(auction.minBid * 1.1) : auction.minBid
+      const increasedBidValue = auction.currentBid ? Math.floor(auction.currentBid * 1.1) || Math.round(auction.minBid * 1.1) : auction
 
       const updatedAuction = {
         id: auction.id,

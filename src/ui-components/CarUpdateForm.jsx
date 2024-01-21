@@ -29,15 +29,11 @@ export default function CarUpdateForm(props) {
     model: "",
     year: "",
     price: "",
-    auctionEndTime: "",
   };
   const [make, setMake] = React.useState(initialValues.make);
   const [model, setModel] = React.useState(initialValues.model);
   const [year, setYear] = React.useState(initialValues.year);
   const [price, setPrice] = React.useState(initialValues.price);
-  const [auctionEndTime, setAuctionEndTime] = React.useState(
-    initialValues.auctionEndTime
-  );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = carRecord
@@ -47,7 +43,6 @@ export default function CarUpdateForm(props) {
     setModel(cleanValues.model);
     setYear(cleanValues.year);
     setPrice(cleanValues.price);
-    setAuctionEndTime(cleanValues.auctionEndTime);
     setErrors({});
   };
   const [carRecord, setCarRecord] = React.useState(carModelProp);
@@ -71,7 +66,6 @@ export default function CarUpdateForm(props) {
     model: [{ type: "Required" }],
     year: [{ type: "Required" }],
     price: [{ type: "Required" }],
-    auctionEndTime: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -90,23 +84,6 @@ export default function CarUpdateForm(props) {
     setErrors((errors) => ({ ...errors, [fieldName]: validationResponse }));
     return validationResponse;
   };
-  const convertToLocal = (date) => {
-    const df = new Intl.DateTimeFormat("default", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      calendar: "iso8601",
-      numberingSystem: "latn",
-      hourCycle: "h23",
-    });
-    const parts = df.formatToParts(date).reduce((acc, part) => {
-      acc[part.type] = part.value;
-      return acc;
-    }, {});
-    return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
-  };
   return (
     <Grid
       as="form"
@@ -120,7 +97,6 @@ export default function CarUpdateForm(props) {
           model,
           year,
           price,
-          auctionEndTime,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -185,7 +161,6 @@ export default function CarUpdateForm(props) {
               model,
               year,
               price,
-              auctionEndTime,
             };
             const result = onChange(modelFields);
             value = result?.make ?? value;
@@ -213,7 +188,6 @@ export default function CarUpdateForm(props) {
               model: value,
               year,
               price,
-              auctionEndTime,
             };
             const result = onChange(modelFields);
             value = result?.model ?? value;
@@ -245,7 +219,6 @@ export default function CarUpdateForm(props) {
               model,
               year: value,
               price,
-              auctionEndTime,
             };
             const result = onChange(modelFields);
             value = result?.year ?? value;
@@ -277,7 +250,6 @@ export default function CarUpdateForm(props) {
               model,
               year,
               price: value,
-              auctionEndTime,
             };
             const result = onChange(modelFields);
             value = result?.price ?? value;
@@ -291,36 +263,6 @@ export default function CarUpdateForm(props) {
         errorMessage={errors.price?.errorMessage}
         hasError={errors.price?.hasError}
         {...getOverrideProps(overrides, "price")}
-      ></TextField>
-      <TextField
-        label="Auction end time"
-        isRequired={true}
-        isReadOnly={false}
-        type="datetime-local"
-        value={auctionEndTime && convertToLocal(new Date(auctionEndTime))}
-        onChange={(e) => {
-          let value =
-            e.target.value === "" ? "" : new Date(e.target.value).toISOString();
-          if (onChange) {
-            const modelFields = {
-              make,
-              model,
-              year,
-              price,
-              auctionEndTime: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.auctionEndTime ?? value;
-          }
-          if (errors.auctionEndTime?.hasError) {
-            runValidationTasks("auctionEndTime", value);
-          }
-          setAuctionEndTime(value);
-        }}
-        onBlur={() => runValidationTasks("auctionEndTime", auctionEndTime)}
-        errorMessage={errors.auctionEndTime?.errorMessage}
-        hasError={errors.auctionEndTime?.hasError}
-        {...getOverrideProps(overrides, "auctionEndTime")}
       ></TextField>
       <Flex
         justifyContent="space-between"

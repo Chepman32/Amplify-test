@@ -40,7 +40,7 @@ export default function NoteCreateForm(props) {
     setErrors({});
   };
   const validations = {
-    name: [{ type: "Required" }],
+    name: [],
     description: [],
     image: [],
   };
@@ -128,7 +128,7 @@ export default function NoteCreateForm(props) {
     >
       <TextField
         label="Name"
-        isRequired={true}
+        isRequired={false}
         isReadOnly={false}
         value={name}
         onChange={(e) => {

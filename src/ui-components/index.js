@@ -8,6 +8,8 @@ export { default as AuctionCreateForm } from "./AuctionCreateForm";
 export { default as AuctionUpdateForm } from "./AuctionUpdateForm";
 export { default as CarCreateForm } from "./CarCreateForm";
 export { default as CarUpdateForm } from "./CarUpdateForm";
+export { default as NoteCreateForm } from "./NoteCreateForm";
+export { default as NoteUpdateForm } from "./NoteUpdateForm";
 export { default as PlayerCreateForm } from "./PlayerCreateForm";
 export { default as PlayerUpdateForm } from "./PlayerUpdateForm";
 export { default as studioTheme } from "./studioTheme";
