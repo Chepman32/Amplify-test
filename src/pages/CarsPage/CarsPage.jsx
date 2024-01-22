@@ -1,9 +1,10 @@
+// CarsPage.js
+
 import React, { useState, useEffect, useCallback } from "react";
-import { Card, Button, Modal, Form, Input, message } from "antd";
+import { Card, Button, Modal, Form, Input, message, Spin } from "antd";
 import { generateClient } from 'aws-amplify/api';
 import { listCars as listCarsQuery } from '../../graphql/queries';
 import * as mutations from '../../graphql/mutations';
-import Img from "../../assets/images/2017-ford-focus-electric-hatchback-angular-front.avif"
 import "./carsPage.css";
 import CarDetailsModal from "./CarDetailsModal";
 
@@ -104,6 +105,11 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
     }
   };
 
+  const getImageSource = (make, model) => {
+    const imageName = `${make.toLowerCase()} ${model.toLowerCase()}.avif`;
+    return require(`../../assets/images/${imageName}`);
+  };
+
   return (
     <div style={{ padding: '20px' }}>
       <Button type="primary" onClick={showModal} style={{ marginBottom: '20px' }}>
@@ -123,18 +129,21 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
               <h3 className="carsPage__model">{car.model}</h3>
               <p className="carsPage__make">{car.make}</p>
             </div>
-            <img src={Img} alt="" style={{ maxWidth: '100%', maxHeight: '50%', borderRadius: '10px' }} />
+            <img
+              src={getImageSource(car.make, car.model)}
+              alt={`${car.make} ${car.model}`}
+              style={{ maxWidth: '100%', maxHeight: '50%', borderRadius: '10px' }}
+            />
             <p>{car.price}</p>
             <div>
               <div className="carsPage__type">
-                <p>RARE</p>
+                <p>{car.type.toUpperCase()} </p>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Modal for creating a new car */}
       <Modal
         visible={visible}
         title="Create a New Car"
@@ -174,7 +183,6 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
         </Form>
       </Modal>
 
-      {/* New modal for displaying car details */}
       <CarDetailsModal
         visible={carDetailsVisible && selectedCar !== null}
         handleCancel={handleCarDetailsCancel}
