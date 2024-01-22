@@ -1,7 +1,7 @@
 // CarsPage.js
 
 import React, { useState, useEffect, useCallback } from "react";
-import { Card, Button, Modal, Form, Input, message, Spin } from "antd";
+import { Card, Button, Modal, Form, Input, message, Spin, Select, Flex } from "antd";
 import { generateClient } from 'aws-amplify/api';
 import { listCars as listCarsQuery } from '../../graphql/queries';
 import * as mutations from '../../graphql/mutations';
@@ -9,6 +9,7 @@ import "./carsPage.css";
 import CarDetailsModal from "./CarDetailsModal";
 
 const { Meta } = Card;
+const { Option } = Select;
 const client = generateClient();
 
 const CarsPage = ({ playerInfo, setMoney, money }) => {
@@ -90,6 +91,7 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
         model: values.model,
         year: values.year,
         price: values.price,
+        type: values.type, // Added type property
       };
 
       await client.graphql({
@@ -106,7 +108,7 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
   };
 
   const getImageSource = (make, model) => {
-    const imageName = `${make.toLowerCase()} ${model.toLowerCase()}.avif`;
+    const imageName = `${make} ${model}.png`;
     return require(`../../assets/images/${imageName}`);
   };
 
@@ -119,27 +121,26 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
         {cars.map((car) => (
           <div
             key={car.id}
-            className="carsPage__item"
+            className={selectedCar && selectedCar.id === car.id ? "carsPage__item carsPage__item_selected" : "carsPage__item"}
             onClick={() => {
               setSelectedCar(car)
               showCarDetailsModal()
             }}
           >
-            <div style={{ textAlign: 'center' }}>
-              <h3 className="carsPage__model">{car.model}</h3>
-              <p className="carsPage__make">{car.make}</p>
-            </div>
+            <Flex style={{ textAlign: 'center' }} align="center">
+              <h3 className="carsPage__model">{car.model} &nbsp;</h3>
+              <h3 className="carsPage__year">{car.year}</h3>
+            </Flex>
+            <p className="carsPage__make">{car.make}</p>
             <img
               src={getImageSource(car.make, car.model)}
               alt={`${car.make} ${car.model}`}
               style={{ maxWidth: '100%', maxHeight: '50%', borderRadius: '10px' }}
             />
             <p>{car.price}</p>
-            <div>
-              <div className="carsPage__type">
-                <p>{car.type.toUpperCase()} </p>
+            <div className="carsPage__type">
+                <p>{car.type.toUpperCase()}</p>
               </div>
-            </div>
           </div>
         ))}
       </div>
@@ -179,6 +180,13 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
           </Form.Item>
           <Form.Item name="price" label="Price" rules={[{ required: true, message: 'Please enter the price!' }]}>
             <Input type="number" />
+          </Form.Item>
+          <Form.Item name="type" label="Type" rules={[{ required: true, message: 'Please select the type!' }]}>
+            <Select>
+              <Option value="regular">Regular</Option>
+              <Option value="epic">Epic</Option>
+              <Option value="legendary">Legendary</Option>
+            </Select>
           </Form.Item>
         </Form>
       </Modal>

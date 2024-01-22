@@ -97,33 +97,37 @@ export default function App() {
     <BrowserRouter>
       <Authenticator>
         {({ signOut, user }) => (
-          <main>
-            <CustomHeader nickname={nickname} money={money} user={user} />
-            <h2>{money} </h2>
-            <Routes>
-              <Route
-                path="/cars"
-                element={
-                  <CarsPage
-                  playerInfo={playerInfo}
-                    money={money}
-                    setMoney={setMoney}
-                  />
-                }
-              />
-              <Route
-                path="/auctions"
-                element={
-                  <AuctionPage
+          <>
+            {
+              playerInfo !== null && <main>
+              <CustomHeader nickname={nickname} money={money} user={user} />
+              <h2>{money} </h2>
+              <Routes>
+                <Route
+                  path="/cars"
+                  element={
+                    <CarsPage
                     playerInfo={playerInfo}
-                    money={money}
-                    setMoney={setMoney}
-                  />
-                }
-              />
-            </Routes>
-            <button onClick={signOut}>Sign out</button>
-          </main>
+                      money={money}
+                      setMoney={setMoney}
+                    />
+                  }
+                />
+                <Route
+                  path="/auctions"
+                  element={
+                    <AuctionPage
+                      playerInfo={playerInfo}
+                      money={money}
+                      setMoney={setMoney}
+                    />
+                  }
+                />
+              </Routes>
+              <button onClick={signOut}>Sign out</button>
+            </main>
+          }
+          </>
         )}
       </Authenticator>
     </BrowserRouter>
