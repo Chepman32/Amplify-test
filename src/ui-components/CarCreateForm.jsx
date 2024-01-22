@@ -27,17 +27,20 @@ export default function CarCreateForm(props) {
     model: "",
     year: "",
     price: "",
+    type: "",
   };
   const [make, setMake] = React.useState(initialValues.make);
   const [model, setModel] = React.useState(initialValues.model);
   const [year, setYear] = React.useState(initialValues.year);
   const [price, setPrice] = React.useState(initialValues.price);
+  const [type, setType] = React.useState(initialValues.type);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setMake(initialValues.make);
     setModel(initialValues.model);
     setYear(initialValues.year);
     setPrice(initialValues.price);
+    setType(initialValues.type);
     setErrors({});
   };
   const validations = {
@@ -45,6 +48,7 @@ export default function CarCreateForm(props) {
     model: [{ type: "Required" }],
     year: [{ type: "Required" }],
     price: [{ type: "Required" }],
+    type: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -76,6 +80,7 @@ export default function CarCreateForm(props) {
           model,
           year,
           price,
+          type,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -142,6 +147,7 @@ export default function CarCreateForm(props) {
               model,
               year,
               price,
+              type,
             };
             const result = onChange(modelFields);
             value = result?.make ?? value;
@@ -169,6 +175,7 @@ export default function CarCreateForm(props) {
               model: value,
               year,
               price,
+              type,
             };
             const result = onChange(modelFields);
             value = result?.model ?? value;
@@ -200,6 +207,7 @@ export default function CarCreateForm(props) {
               model,
               year: value,
               price,
+              type,
             };
             const result = onChange(modelFields);
             value = result?.year ?? value;
@@ -231,6 +239,7 @@ export default function CarCreateForm(props) {
               model,
               year,
               price: value,
+              type,
             };
             const result = onChange(modelFields);
             value = result?.price ?? value;
@@ -244,6 +253,34 @@ export default function CarCreateForm(props) {
         errorMessage={errors.price?.errorMessage}
         hasError={errors.price?.hasError}
         {...getOverrideProps(overrides, "price")}
+      ></TextField>
+      <TextField
+        label="Type"
+        isRequired={false}
+        isReadOnly={false}
+        value={type}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              make,
+              model,
+              year,
+              price,
+              type: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.type ?? value;
+          }
+          if (errors.type?.hasError) {
+            runValidationTasks("type", value);
+          }
+          setType(value);
+        }}
+        onBlur={() => runValidationTasks("type", type)}
+        errorMessage={errors.type?.errorMessage}
+        hasError={errors.type?.hasError}
+        {...getOverrideProps(overrides, "type")}
       ></TextField>
       <Flex
         justifyContent="space-between"

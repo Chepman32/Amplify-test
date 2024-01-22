@@ -26,12 +26,14 @@ export declare type CarUpdateFormInputValues = {
     model?: string;
     year?: number;
     price?: number;
+    type?: string;
 };
 export declare type CarUpdateFormValidationValues = {
     make?: ValidationFunction<string>;
     model?: ValidationFunction<string>;
     year?: ValidationFunction<number>;
     price?: ValidationFunction<number>;
+    type?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type CarUpdateFormOverridesProps = {
@@ -40,6 +42,7 @@ export declare type CarUpdateFormOverridesProps = {
     model?: PrimitiveOverrideProps<TextFieldProps>;
     year?: PrimitiveOverrideProps<TextFieldProps>;
     price?: PrimitiveOverrideProps<TextFieldProps>;
+    type?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type CarUpdateFormProps = React.PropsWithChildren<{
     overrides?: CarUpdateFormOverridesProps | undefined | null;

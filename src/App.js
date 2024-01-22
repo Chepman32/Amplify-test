@@ -50,12 +50,12 @@ export default function App() {
 
   useEffect(() => {
     let isDataFetched = false;
-
+  
     const fetchData = async () => {
       if (!isDataFetched) {
         !players.length && (await listPlayersFunc());
         isDataFetched = true;
-
+  
         const currentPlayer = players.find((pl) => pl.nickname === nickname);
         if (currentPlayer) {
           setPlayerInfo(currentPlayer);
@@ -63,9 +63,10 @@ export default function App() {
         }
       }
     };
-
+  
     fetchData();
   }, [nickname, players]);
+  
 
   const listener = async (data) => {
     const nicknames = players.map((pl) => pl.nickname);

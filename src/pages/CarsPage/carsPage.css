@@ -1,4 +1,45 @@
 .carsPage__item {
- width: 10vw;
- height: auto;
-}
+    height: 20vw;
+            display: flex;
+            padding: .3vh;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            margin-left: .5vw;
+            margin-bottom: 20px; 
+            border: 2px solid #760;
+            border-radius: 10px;
+   }
+   
+   .carsPage__model {
+       font-size: 2vh;
+   }
+   
+   .carsPage__type {
+       width: 5vw !important;
+       padding: .3vh 100%;
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       background: #397aab;
+   }
+   
+   .carsPage__type p {
+    font-size: 1.5vh;
+    font-weight: 600;
+    color: #fff;
+   }
+
+   .carDetailsModal {
+    width: 60%;
+   }
+   .carDetailsModal__row {
+    height: 6vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2px;
+    background: #528a4c;
+    font-size: 2vh;
+    font-weight: 600;
+   }

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Card, Typography, Space, Button, Modal, Form, Input, Select, Upload, message, Spin } from "antd";
+import React, { useState, useEffect, useCallback } from "react";
+import { Card, Button, Modal, Form, Input, message } from "antd";
 import { generateClient } from 'aws-amplify/api';
 import { listCars as listCarsQuery } from '../../graphql/queries';
 import * as mutations from '../../graphql/mutations';
 import Img from "../../assets/images/2017-ford-focus-electric-hatchback-angular-front.avif"
-import "./carsPage.css"
+import "./carsPage.css";
+import CarDetailsModal from "./CarDetailsModal";
 
 const { Meta } = Card;
 const client = generateClient();
@@ -13,16 +14,18 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
   const [cars, setCars] = useState([]);
   const [visible, setVisible] = useState(false);
   const [loadingBuy, setLoadingBuy] = useState(false);
+  const [selectedCar, setSelectedCar] = useState(null);
   const [form] = Form.useForm();
+  const [carDetailsVisible, setCarDetailsVisible] = useState(false);
 
-  const fetchCars = async () => {
+  const fetchCars = useCallback(async () => {
     try {
       const carData = await client.graphql({ query: listCarsQuery });
       setCars(carData.data.listCars.items);
     } catch (error) {
       console.error("Error fetching cars:", error);
     }
-  };
+  }, []);
 
   const buyCar = async (car) => {
     setMoney(money - car.price);
@@ -55,20 +58,28 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
     }
     finally {
       setLoadingBuy(false)
+      setSelectedCar(null)
     }
   };
 
-
   useEffect(() => {
     fetchCars();
-  }, []);
+  }, [fetchCars]);
 
   const showModal = () => {
     setVisible(true);
   };
 
+  const showCarDetailsModal = () => {
+    setCarDetailsVisible(true);
+  };
+
   const handleCancel = () => {
     setVisible(false);
+  };
+
+  const handleCarDetailsCancel = () => {
+    setCarDetailsVisible(false);
   };
 
   const createNewCar = async (values) => {
@@ -100,22 +111,30 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
       </Button>
       <div style={{ display: 'flex', flexDirection: 'row', flexWrap: "wrap" }}>
         {cars.map((car) => (
-          <Card
+          <div
             key={car.id}
-            cover={
-              <img src={Img} alt="" style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '10px' }} />
-            }
-            style={{ height: '20vw', width: '20vw', display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: ".5vw", marginBottom: '20px', border: "2px solid #760", borderRadius: '10px' }}
+            className="carsPage__item"
+            onClick={() => {
+              setSelectedCar(car)
+              showCarDetailsModal()
+            }}
           >
-            <Space direction="horizontal">
-            </Space>
-            <Button onClick={() => buyCar(car)}>
-            {loadingBuy ? <Spin /> : "Buy car"}
-            </Button>
-            {car.price}
-          </Card>
+            <div style={{ textAlign: 'center' }}>
+              <h3 className="carsPage__model">{car.model}</h3>
+              <p className="carsPage__make">{car.make}</p>
+            </div>
+            <img src={Img} alt="" style={{ maxWidth: '100%', maxHeight: '50%', borderRadius: '10px' }} />
+            <p>{car.price}</p>
+            <div>
+              <div className="carsPage__type">
+                <p>RARE</p>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
+
+      {/* Modal for creating a new car */}
       <Modal
         visible={visible}
         title="Create a New Car"
@@ -154,6 +173,15 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
           </Form.Item>
         </Form>
       </Modal>
+
+      {/* New modal for displaying car details */}
+      <CarDetailsModal
+        visible={carDetailsVisible && selectedCar !== null}
+        handleCancel={handleCarDetailsCancel}
+        selectedCar={selectedCar}
+        buyCar={buyCar}
+        loadingBuy={loadingBuy}
+      />
     </div>
   );
 };

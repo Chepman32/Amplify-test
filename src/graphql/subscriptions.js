@@ -157,6 +157,7 @@ export const onCreateCar = /* GraphQL */ `
         nextToken
         __typename
       }
+      type
       createdAt
       updatedAt
       __typename
@@ -175,6 +176,7 @@ export const onUpdateCar = /* GraphQL */ `
         nextToken
         __typename
       }
+      type
       createdAt
       updatedAt
       __typename
@@ -193,6 +195,7 @@ export const onDeleteCar = /* GraphQL */ `
         nextToken
         __typename
       }
+      type
       createdAt
       updatedAt
       __typename
@@ -222,6 +225,7 @@ export const onCreateCarPlayer = /* GraphQL */ `
         model
         year
         price
+        type
         createdAt
         updatedAt
         __typename
@@ -255,6 +259,7 @@ export const onUpdateCarPlayer = /* GraphQL */ `
         model
         year
         price
+        type
         createdAt
         updatedAt
         __typename
@@ -288,6 +293,7 @@ export const onDeleteCarPlayer = /* GraphQL */ `
         model
         year
         price
+        type
         createdAt
         updatedAt
         __typename

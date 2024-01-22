@@ -129,6 +129,7 @@ export const getCar = /* GraphQL */ `
         nextToken
         __typename
       }
+      type
       createdAt
       updatedAt
       __typename
@@ -148,6 +149,7 @@ export const listCars = /* GraphQL */ `
         model
         year
         price
+        type
         createdAt
         updatedAt
         __typename
@@ -178,6 +180,7 @@ export const getCarPlayer = /* GraphQL */ `
         model
         year
         price
+        type
         createdAt
         updatedAt
         __typename
