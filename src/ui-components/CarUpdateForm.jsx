@@ -7,11 +7,9 @@
 /* eslint-disable */
 import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
+import { Car } from "../models";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
-import { generateClient } from "aws-amplify/api";
-import { getCar } from "../graphql/queries";
-import { updateCar } from "../graphql/mutations";
-const client = generateClient();
+import { DataStore } from "aws-amplify/datastore";
 export default function CarUpdateForm(props) {
   const {
     id: idProp,
@@ -51,14 +49,7 @@ export default function CarUpdateForm(props) {
   const [carRecord, setCarRecord] = React.useState(carModelProp);
   React.useEffect(() => {
     const queryData = async () => {
-      const record = idProp
-        ? (
-            await client.graphql({
-              query: getCar.replaceAll("__typename", ""),
-              variables: { id: idProp },
-            })
-          )?.data?.getCar
-        : carModelProp;
+      const record = idProp ? await DataStore.query(Car, idProp) : carModelProp;
       setCarRecord(record);
     };
     queryData();
@@ -101,7 +92,7 @@ export default function CarUpdateForm(props) {
           model,
           year,
           price,
-          type: type ?? null,
+          type,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -131,22 +122,17 @@ export default function CarUpdateForm(props) {
               modelFields[key] = null;
             }
           });
-          await client.graphql({
-            query: updateCar.replaceAll("__typename", ""),
-            variables: {
-              input: {
-                id: carRecord.id,
-                ...modelFields,
-              },
-            },
-          });
+          await DataStore.save(
+            Car.copyOf(carRecord, (updated) => {
+              Object.assign(updated, modelFields);
+            })
+          );
           if (onSuccess) {
             onSuccess(modelFields);
           }
         } catch (err) {
           if (onError) {
-            const messages = err.errors.map((e) => e.message).join("\n");
-            onError(modelFields, messages);
+            onError(modelFields, err.message);
           }
         }
       }}

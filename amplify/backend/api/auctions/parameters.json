@@ -1,6 +1,6 @@
 {
-  "AppSyncApiName": "databasetest",
+  "AppSyncApiName": "auctions",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
   "DynamoDBEnableServerSideEncryption": false,
-  "AuthModeLastUpdated": "2024-01-13T11:33:30.244Z"
+  "AuthModeLastUpdated": "2024-01-23T11:37:13.884Z"
 }

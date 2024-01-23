@@ -13,6 +13,9 @@ export const createNote = /* GraphQL */ `
       image
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }
@@ -29,6 +32,9 @@ export const updateNote = /* GraphQL */ `
       image
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }
@@ -45,6 +51,9 @@ export const deleteNote = /* GraphQL */ `
       image
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }
@@ -66,6 +75,9 @@ export const createAuction = /* GraphQL */ `
       lastBidPlayer
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }
@@ -87,6 +99,9 @@ export const updateAuction = /* GraphQL */ `
       lastBidPlayer
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }
@@ -108,6 +123,9 @@ export const deleteAuction = /* GraphQL */ `
       lastBidPlayer
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }
@@ -122,12 +140,16 @@ export const createPlayer = /* GraphQL */ `
       nickname
       cars {
         nextToken
+        startedAt
         __typename
       }
       money
       userId
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }
@@ -142,12 +164,16 @@ export const updatePlayer = /* GraphQL */ `
       nickname
       cars {
         nextToken
+        startedAt
         __typename
       }
       money
       userId
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }
@@ -162,12 +188,16 @@ export const deletePlayer = /* GraphQL */ `
       nickname
       cars {
         nextToken
+        startedAt
         __typename
       }
       money
       userId
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }
@@ -185,11 +215,15 @@ export const createCar = /* GraphQL */ `
       price
       CarsToPlayers {
         nextToken
+        startedAt
         __typename
       }
       type
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }
@@ -207,11 +241,15 @@ export const updateCar = /* GraphQL */ `
       price
       CarsToPlayers {
         nextToken
+        startedAt
         __typename
       }
       type
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }
@@ -229,11 +267,15 @@ export const deleteCar = /* GraphQL */ `
       price
       CarsToPlayers {
         nextToken
+        startedAt
         __typename
       }
       type
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }
@@ -254,6 +296,9 @@ export const createCarPlayer = /* GraphQL */ `
         userId
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
         __typename
       }
       car {
@@ -265,10 +310,16 @@ export const createCarPlayer = /* GraphQL */ `
         type
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
         __typename
       }
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }
@@ -289,6 +340,9 @@ export const updateCarPlayer = /* GraphQL */ `
         userId
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
         __typename
       }
       car {
@@ -300,10 +354,16 @@ export const updateCarPlayer = /* GraphQL */ `
         type
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
         __typename
       }
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }
@@ -324,6 +384,9 @@ export const deleteCarPlayer = /* GraphQL */ `
         userId
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
         __typename
       }
       car {
@@ -335,10 +398,16 @@ export const deleteCarPlayer = /* GraphQL */ `
         type
         createdAt
         updatedAt
+        _version
+        _deleted
+        _lastChangedAt
         __typename
       }
       createdAt
       updatedAt
+      _version
+      _deleted
+      _lastChangedAt
       __typename
     }
   }

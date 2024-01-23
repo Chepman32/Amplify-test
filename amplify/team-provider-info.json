@@ -1,25 +1,22 @@
 {
-  "staging": {
+  "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-databasetest-staging-65739-authRole",
-      "UnauthRoleArn": "arn:aws:iam::162721372843:role/amplify-databasetest-staging-65739-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::162721372843:role/amplify-databasetest-staging-65739-authRole",
+      "AuthRoleName": "amplify-auctions-dev-140120-authRole",
+      "UnauthRoleArn": "arn:aws:iam::162721372843:role/amplify-auctions-dev-140120-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::162721372843:role/amplify-auctions-dev-140120-authRole",
       "Region": "us-east-2",
-      "DeploymentBucketName": "amplify-databasetest-staging-65739-deployment",
-      "UnauthRoleName": "amplify-databasetest-staging-65739-unauthRole",
-      "StackName": "amplify-databasetest-staging-65739",
-      "StackId": "arn:aws:cloudformation:us-east-2:162721372843:stack/amplify-databasetest-staging-65739/0a874820-b1e1-11ee-b0b4-02de35b05309",
-      "AmplifyAppId": "d3azaxy8avfczq"
+      "DeploymentBucketName": "amplify-auctions-dev-140120-deployment",
+      "UnauthRoleName": "amplify-auctions-dev-140120-unauthRole",
+      "StackName": "amplify-auctions-dev-140120",
+      "StackId": "arn:aws:cloudformation:us-east-2:162721372843:stack/amplify-auctions-dev-140120/bfd500f0-b9de-11ee-9d36-062e0929acf3",
+      "AmplifyAppId": "dbalce6gvpodl"
     },
     "categories": {
-      "auth": {
-        "databasetest6af1749e": {}
-      },
       "api": {
-        "databasetest": {}
+        "auctions": {}
       },
-      "storage": {
-        "databaseTest": {}
+      "auth": {
+        "auctions4cb844af": {}
       }
     }
   }

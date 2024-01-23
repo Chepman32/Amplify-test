@@ -1,7 +1,7 @@
 {
   "version": 1,
   "serviceConfiguration": {
-    "apiName": "databasetest",
+    "apiName": "auctions",
     "serviceName": "AppSync",
     "defaultAuthType": {
       "mode": "API_KEY",
@@ -10,7 +10,7 @@
     },
     "conflictResolution": {
       "defaultResolutionStrategy": {
-        "type": "NONE"
+        "type": "AUTOMERGE"
       }
     },
     "additionalAuthTypes": [

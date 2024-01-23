@@ -6,6 +6,7 @@
 
 import * as React from "react";
 import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { Car } from "../models";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -48,7 +49,7 @@ export declare type CarUpdateFormProps = React.PropsWithChildren<{
     overrides?: CarUpdateFormOverridesProps | undefined | null;
 } & {
     id?: string;
-    car?: any;
+    car?: Car;
     onSubmit?: (fields: CarUpdateFormInputValues) => CarUpdateFormInputValues;
     onSuccess?: (fields: CarUpdateFormInputValues) => void;
     onError?: (fields: CarUpdateFormInputValues, errorMessage: string) => void;

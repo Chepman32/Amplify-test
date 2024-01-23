@@ -7,10 +7,9 @@
 /* eslint-disable */
 import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
+import { Auction } from "../models";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
-import { generateClient } from "aws-amplify/api";
-import { createAuction } from "../graphql/mutations";
-const client = generateClient();
+import { DataStore } from "aws-amplify/datastore";
 export default function AuctionCreateForm(props) {
   const {
     clearOnSuccess = true,
@@ -127,14 +126,7 @@ export default function AuctionCreateForm(props) {
               modelFields[key] = null;
             }
           });
-          await client.graphql({
-            query: createAuction.replaceAll("__typename", ""),
-            variables: {
-              input: {
-                ...modelFields,
-              },
-            },
-          });
+          await DataStore.save(new Auction(modelFields));
           if (onSuccess) {
             onSuccess(modelFields);
           }
@@ -143,8 +135,7 @@ export default function AuctionCreateForm(props) {
           }
         } catch (err) {
           if (onError) {
-            const messages = err.errors.map((e) => e.message).join("\n");
-            onError(modelFields, messages);
+            onError(modelFields, err.message);
           }
         }
       }}

@@ -1,6 +1,6 @@
 {
   "api": {
-    "databasetest": {
+    "auctions": {
       "dependsOn": [],
       "output": {
         "authConfig": {
@@ -23,7 +23,7 @@
     }
   },
   "auth": {
-    "databasetest6af1749e": {
+    "auctions4cb844af": {
       "customAuth": false,
       "dependsOn": [],
       "frontendAuthConfig": {
@@ -46,13 +46,6 @@
       },
       "providerPlugin": "awscloudformation",
       "service": "Cognito"
-    }
-  },
-  "storage": {
-    "databaseTest": {
-      "dependsOn": [],
-      "providerPlugin": "awscloudformation",
-      "service": "S3"
     }
   }
 }

@@ -6,6 +6,7 @@
 
 import * as React from "react";
 import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
+import { Note } from "../models";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -42,7 +43,7 @@ export declare type NoteUpdateFormProps = React.PropsWithChildren<{
     overrides?: NoteUpdateFormOverridesProps | undefined | null;
 } & {
     id?: string;
-    note?: any;
+    note?: Note;
     onSubmit?: (fields: NoteUpdateFormInputValues) => NoteUpdateFormInputValues;
     onSuccess?: (fields: NoteUpdateFormInputValues) => void;
     onError?: (fields: NoteUpdateFormInputValues, errorMessage: string) => void;

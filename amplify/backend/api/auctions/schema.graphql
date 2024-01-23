@@ -33,5 +33,4 @@ type Car @model @auth(rules: [{allow: public}]) {
   price: Int!
   CarsToPlayers: [Player] @manyToMany(relationName: "CarPlayer")
   type: String
-}
- 
+} 

@@ -1,4 +1,3 @@
-// App.js
 import React, { useEffect, useState } from "react";
 import { Amplify } from "aws-amplify";
 import AuctionPage from "./pages/AuctionPage";
@@ -44,7 +43,6 @@ export default function App() {
       variables: { input: data },
     });
 
-    // Set the money state immediately after creating a new player
     setMoney(1000);
   }
 
@@ -59,13 +57,14 @@ export default function App() {
         const currentPlayer = players.find((pl) => pl.nickname === nickname);
         if (currentPlayer) {
           setPlayerInfo(currentPlayer);
-          setMoney(currentPlayer.money);
+          playerInfo && setMoney(currentPlayer.money);
         }
       }
     };
   
     fetchData();
-  }, [nickname, players]);
+    
+  }, [nickname, playerInfo, players]);
   
 
   const listener = async (data) => {
@@ -87,7 +86,7 @@ export default function App() {
     );
     setPlayerInfo(currentPlayer);
     setNickname(data?.payload?.data?.username);
-    setMoney(currentPlayer.money);
+    currentPlayer && setMoney(currentPlayer.money);
     localStorage.setItem("CAR_AUCTION_NICKNAME", data?.payload?.data?.username);
   };
 
@@ -124,9 +123,10 @@ export default function App() {
                   }
                 />
               </Routes>
-              <button onClick={signOut}>Sign out</button>
             </main>
-          }
+            
+            }
+            <button onClick={signOut}>Sign out</button>
           </>
         )}
       </Authenticator>

@@ -7,11 +7,9 @@
 /* eslint-disable */
 import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
+import { Player } from "../models";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
-import { generateClient } from "aws-amplify/api";
-import { getPlayer } from "../graphql/queries";
-import { updatePlayer } from "../graphql/mutations";
-const client = generateClient();
+import { DataStore } from "aws-amplify/datastore";
 export default function PlayerUpdateForm(props) {
   const {
     id: idProp,
@@ -46,12 +44,7 @@ export default function PlayerUpdateForm(props) {
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
-        ? (
-            await client.graphql({
-              query: getPlayer.replaceAll("__typename", ""),
-              variables: { id: idProp },
-            })
-          )?.data?.getPlayer
+        ? await DataStore.query(Player, idProp)
         : playerModelProp;
       setPlayerRecord(record);
     };
@@ -89,9 +82,9 @@ export default function PlayerUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          nickname: nickname ?? null,
-          money: money ?? null,
-          userId: userId ?? null,
+          nickname,
+          money,
+          userId,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -121,22 +114,17 @@ export default function PlayerUpdateForm(props) {
               modelFields[key] = null;
             }
           });
-          await client.graphql({
-            query: updatePlayer.replaceAll("__typename", ""),
-            variables: {
-              input: {
-                id: playerRecord.id,
-                ...modelFields,
-              },
-            },
-          });
+          await DataStore.save(
+            Player.copyOf(playerRecord, (updated) => {
+              Object.assign(updated, modelFields);
+            })
+          );
           if (onSuccess) {
             onSuccess(modelFields);
           }
         } catch (err) {
           if (onError) {
-            const messages = err.errors.map((e) => e.message).join("\n");
-            onError(modelFields, messages);
+            onError(modelFields, err.message);
           }
         }
       }}
