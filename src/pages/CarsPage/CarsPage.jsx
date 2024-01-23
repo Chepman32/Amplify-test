@@ -3,11 +3,28 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, Button, Modal, Form, Input, message, Spin, Select, Flex } from "antd";
 import { generateClient } from 'aws-amplify/api';
-import { listCars as listCarsQuery } from '../../graphql/queries';
+import { getCarPlayer, getPlayer, listCars as listCarsQuery } from '../../graphql/queries';
 import * as mutations from '../../graphql/mutations';
 import "./carsPage.css";
 import CarDetailsModal from "./CarDetailsModal";
+import CarCard from "./CarCard";
 
+export const getUserQuery = `
+  query getUser($id: ID!) {
+    getUser(id: $id) {
+      id
+      nickname
+      cars {
+        id
+        make
+        model
+        year
+        price
+        type
+      }
+    }
+  }
+`; 
 const { Meta } = Card;
 const { Option } = Select;
 const client = generateClient();
@@ -28,6 +45,19 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
       console.error("Error fetching cars:", error);
     }
   }, []);
+
+  const fetchUserCars = useCallback(async () => {
+    try {
+      const carData = await client.graphql({
+        query: getCarPlayer,
+        variables: { id: playerInfo.userId }
+      });
+      console.log(carData);
+    } catch (error) {
+      console.error("Error fetching cars:", error);
+    }
+  }, [playerInfo.userId]);
+  
 
   const buyCar = async (car) => {
     setMoney(money - car.price);
@@ -66,7 +96,8 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
 
   useEffect(() => {
     fetchCars();
-  }, [fetchCars]);
+    fetchUserCars()
+  }, [fetchCars, fetchUserCars]);
 
   const showModal = () => {
     setVisible(true);
@@ -119,29 +150,7 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
       </Button>
       <div style={{ display: 'flex', flexDirection: 'row', flexWrap: "wrap" }}>
         {cars.map((car) => (
-          <div
-            key={car.id}
-            className={selectedCar && selectedCar.id === car.id ? "carsPage__item carsPage__item_selected" : "carsPage__item"}
-            onClick={() => {
-              setSelectedCar(car)
-              showCarDetailsModal()
-            }}
-          >
-            <Flex style={{ textAlign: 'center' }} align="center">
-              <h3 className="carsPage__model">{car.model} &nbsp;</h3>
-              <h3 className="carsPage__year">{car.year}</h3>
-            </Flex>
-            <p className="carsPage__make">{car.make}</p>
-            <img
-              src={getImageSource(car.make, car.model)}
-              alt={`${car.make} ${car.model}`}
-              style={{ maxWidth: '100%', maxHeight: '50%', borderRadius: '10px' }}
-            />
-            <p>{car.price}</p>
-            <div className="carsPage__type">
-                <p>{car.type.toUpperCase()}</p>
-              </div>
-          </div>
+          <CarCard selectedCar={selectedCar} setSelectedCar={setSelectedCar} showCarDetailsModal={showCarDetailsModal} car={car} getImageSource={getImageSource}/>
         ))}
       </div>
 
