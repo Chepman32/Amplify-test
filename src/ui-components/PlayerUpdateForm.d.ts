@@ -25,19 +25,16 @@ export declare type ValidationFunction<T> = (value: T, validationResponse: Valid
 export declare type PlayerUpdateFormInputValues = {
     nickname?: string;
     money?: number;
-    userId?: string;
 };
 export declare type PlayerUpdateFormValidationValues = {
     nickname?: ValidationFunction<string>;
     money?: ValidationFunction<number>;
-    userId?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type PlayerUpdateFormOverridesProps = {
     PlayerUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
     nickname?: PrimitiveOverrideProps<TextFieldProps>;
     money?: PrimitiveOverrideProps<TextFieldProps>;
-    userId?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type PlayerUpdateFormProps = React.PropsWithChildren<{
     overrides?: PlayerUpdateFormOverridesProps | undefined | null;

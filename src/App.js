@@ -19,9 +19,7 @@ const client = generateClient();
 Amplify.configure(awsExports);
 
 export default function App() {
-  const [nickname, setNickname] = useState(
-    localStorage.getItem("CAR_AUCTION_NICKNAME")
-  );
+  const [nickname, setNickname] = useState("");
   const [money, setMoney] = useState(0);
   const [players, setPlayers] = useState([]);
   const [playerInfo, setPlayerInfo] = useState(null);
@@ -99,7 +97,7 @@ export default function App() {
           <>
             {
               playerInfo !== null && <main>
-              <CustomHeader nickname={nickname} money={money} user={user} />
+              <CustomHeader money={money} username={user} />
               <h2>{money} </h2>
               <Routes>
                 <Route

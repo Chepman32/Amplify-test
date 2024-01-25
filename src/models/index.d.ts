@@ -89,7 +89,6 @@ type EagerPlayer = {
   readonly nickname?: string | null;
   readonly cars?: (CarPlayer | null)[] | null;
   readonly money?: number | null;
-  readonly userId?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -103,7 +102,6 @@ type LazyPlayer = {
   readonly nickname?: string | null;
   readonly cars: AsyncCollection<CarPlayer>;
   readonly money?: number | null;
-  readonly userId?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

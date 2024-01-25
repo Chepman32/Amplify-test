@@ -25,11 +25,9 @@ export default function PlayerUpdateForm(props) {
   const initialValues = {
     nickname: "",
     money: "",
-    userId: "",
   };
   const [nickname, setNickname] = React.useState(initialValues.nickname);
   const [money, setMoney] = React.useState(initialValues.money);
-  const [userId, setUserId] = React.useState(initialValues.userId);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     const cleanValues = playerRecord
@@ -37,7 +35,6 @@ export default function PlayerUpdateForm(props) {
       : initialValues;
     setNickname(cleanValues.nickname);
     setMoney(cleanValues.money);
-    setUserId(cleanValues.userId);
     setErrors({});
   };
   const [playerRecord, setPlayerRecord] = React.useState(playerModelProp);
@@ -54,7 +51,6 @@ export default function PlayerUpdateForm(props) {
   const validations = {
     nickname: [],
     money: [],
-    userId: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -84,7 +80,6 @@ export default function PlayerUpdateForm(props) {
         let modelFields = {
           nickname,
           money,
-          userId,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -142,7 +137,6 @@ export default function PlayerUpdateForm(props) {
             const modelFields = {
               nickname: value,
               money,
-              userId,
             };
             const result = onChange(modelFields);
             value = result?.nickname ?? value;
@@ -172,7 +166,6 @@ export default function PlayerUpdateForm(props) {
             const modelFields = {
               nickname,
               money: value,
-              userId,
             };
             const result = onChange(modelFields);
             value = result?.money ?? value;
@@ -186,32 +179,6 @@ export default function PlayerUpdateForm(props) {
         errorMessage={errors.money?.errorMessage}
         hasError={errors.money?.hasError}
         {...getOverrideProps(overrides, "money")}
-      ></TextField>
-      <TextField
-        label="User id"
-        isRequired={false}
-        isReadOnly={false}
-        value={userId}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              nickname,
-              money,
-              userId: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.userId ?? value;
-          }
-          if (errors.userId?.hasError) {
-            runValidationTasks("userId", value);
-          }
-          setUserId(value);
-        }}
-        onBlur={() => runValidationTasks("userId", userId)}
-        errorMessage={errors.userId?.errorMessage}
-        hasError={errors.userId?.hasError}
-        {...getOverrideProps(overrides, "userId")}
       ></TextField>
       <Flex
         justifyContent="space-between"

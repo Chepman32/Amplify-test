@@ -123,7 +123,6 @@ export const onCreatePlayer = /* GraphQL */ `
         __typename
       }
       money
-      userId
       createdAt
       updatedAt
       _version
@@ -144,7 +143,6 @@ export const onUpdatePlayer = /* GraphQL */ `
         __typename
       }
       money
-      userId
       createdAt
       updatedAt
       _version
@@ -165,7 +163,6 @@ export const onDeletePlayer = /* GraphQL */ `
         __typename
       }
       money
-      userId
       createdAt
       updatedAt
       _version
@@ -256,7 +253,6 @@ export const onCreateCarPlayer = /* GraphQL */ `
         id
         nickname
         money
-        userId
         createdAt
         updatedAt
         _version
@@ -299,7 +295,6 @@ export const onUpdateCarPlayer = /* GraphQL */ `
         id
         nickname
         money
-        userId
         createdAt
         updatedAt
         _version
@@ -342,7 +337,6 @@ export const onDeleteCarPlayer = /* GraphQL */ `
         id
         nickname
         money
-        userId
         createdAt
         updatedAt
         _version

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Hub } from 'aws-amplify/utils';
 import "@aws-amplify/ui-react/styles.css";
-import { Modal, Form, Input, Button, Card, Col, Row, Typography, Space, Spin, Flex, Select } from "antd";
+import { Modal, Form, Input, Button, Card, Col, Row, Typography, Space, Spin, Flex, Select, message } from "antd";
 import { generateClient } from 'aws-amplify/api';
 import * as mutations from '../graphql/mutations';
 import { listAuctions as listAuctionsQuery } from '../graphql/queries';
@@ -88,21 +88,20 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
   const increaseBid = async (auction) => {
     try {
       setLoadingBid(true);
-      const increasedBidValue = auction.currentBid ? Math.floor(auction.currentBid * 1.1) || Math.round(auction.minBid * 1.1) : auction
+      const increasedBidValue = Math.floor(auction.currentBid * 1.1) || Math.round(auction.minBid * 1.1)
 
       const updatedAuction = {
         id: auction.id,
         carName: auction.carName,
         player: auction.player,
         buy: auction.buy,
-        minBid: auction.currentBid || auction.minBid,
+        minBid: auction.minBid,
         currentBid: increasedBidValue,
         endTime: auction.endTime,
         lastBidPlayer: playerInfo.nickname,
         status: increasedBidValue < auction.buy ? "active" : "finished",
       };
 
-      setMoney(auction.lastBidPlayer === playerInfo.nickname ? money - (increasedBidValue - auction.currentBid) : money - increasedBidValue);
 
       await client.graphql({
         query: mutations.updateAuction,
@@ -117,6 +116,7 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
           }
         },
       });
+      message.success('Bid successfully increased!');
 
       listAuctions();
     } catch (error) {
@@ -135,9 +135,9 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
         id: auction.id,
         carName: auction.carName,
         player: auction.player,
-        buy: auction.buy,
-        minBid: auction.currentBid || auction.minBid,
-        currentBid: auction.buy,
+        buy: 300,
+        minBid: 300,
+        currentBid: 300,
         endTime: auction.endTime,
         lastBidPlayer: playerInfo.nickname,
         status: "finished",
@@ -158,7 +158,7 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
           }
         },
       });
-
+      message.success('Car successfully bought!');
       listAuctions();
     } catch (error) {
       console.error(error);

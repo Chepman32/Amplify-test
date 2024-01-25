@@ -1,9 +1,12 @@
 // CustomHeader.js
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
 
-const CustomHeader = (nickname, user, money) => {
+const CustomHeader = (username, money) => {
+  useEffect(() => {
+    console.log("user", username)
+  }, [])
   return (
     <Menu theme="dark" mode="horizontal">
       <Menu.Item key="cars">

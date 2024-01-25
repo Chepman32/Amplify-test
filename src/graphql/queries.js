@@ -171,7 +171,6 @@ export const getPlayer = /* GraphQL */ `
         __typename
       }
       money
-      userId
       createdAt
       updatedAt
       _version
@@ -192,7 +191,6 @@ export const listPlayers = /* GraphQL */ `
         id
         nickname
         money
-        userId
         createdAt
         updatedAt
         _version
@@ -223,7 +221,6 @@ export const syncPlayers = /* GraphQL */ `
         id
         nickname
         money
-        userId
         createdAt
         updatedAt
         _version
@@ -330,7 +327,6 @@ export const getCarPlayer = /* GraphQL */ `
         id
         nickname
         money
-        userId
         createdAt
         updatedAt
         _version
