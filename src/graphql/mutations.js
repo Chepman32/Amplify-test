@@ -13,9 +13,6 @@ export const createNote = /* GraphQL */ `
       image
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -32,9 +29,6 @@ export const updateNote = /* GraphQL */ `
       image
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -51,9 +45,6 @@ export const deleteNote = /* GraphQL */ `
       image
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -75,9 +66,6 @@ export const createAuction = /* GraphQL */ `
       lastBidPlayer
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -99,9 +87,6 @@ export const updateAuction = /* GraphQL */ `
       lastBidPlayer
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -123,78 +108,51 @@ export const deleteAuction = /* GraphQL */ `
       lastBidPlayer
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
 `;
-export const createPlayer = /* GraphQL */ `
-  mutation CreatePlayer(
-    $input: CreatePlayerInput!
-    $condition: ModelPlayerConditionInput
+export const createUser = /* GraphQL */ `
+  mutation CreateUser(
+    $input: CreateUserInput!
+    $condition: ModelUserConditionInput
   ) {
-    createPlayer(input: $input, condition: $condition) {
+    createUser(input: $input, condition: $condition) {
       id
       nickname
-      cars {
-        nextToken
-        startedAt
-        __typename
-      }
       money
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
 `;
-export const updatePlayer = /* GraphQL */ `
-  mutation UpdatePlayer(
-    $input: UpdatePlayerInput!
-    $condition: ModelPlayerConditionInput
+export const updateUser = /* GraphQL */ `
+  mutation UpdateUser(
+    $input: UpdateUserInput!
+    $condition: ModelUserConditionInput
   ) {
-    updatePlayer(input: $input, condition: $condition) {
+    updateUser(input: $input, condition: $condition) {
       id
       nickname
-      cars {
-        nextToken
-        startedAt
-        __typename
-      }
       money
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
 `;
-export const deletePlayer = /* GraphQL */ `
-  mutation DeletePlayer(
-    $input: DeletePlayerInput!
-    $condition: ModelPlayerConditionInput
+export const deleteUser = /* GraphQL */ `
+  mutation DeleteUser(
+    $input: DeleteUserInput!
+    $condition: ModelUserConditionInput
   ) {
-    deletePlayer(input: $input, condition: $condition) {
+    deleteUser(input: $input, condition: $condition) {
       id
       nickname
-      cars {
-        nextToken
-        startedAt
-        __typename
-      }
       money
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -210,17 +168,9 @@ export const createCar = /* GraphQL */ `
       model
       year
       price
-      CarsToPlayers {
-        nextToken
-        startedAt
-        __typename
-      }
       type
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -236,17 +186,9 @@ export const updateCar = /* GraphQL */ `
       model
       year
       price
-      CarsToPlayers {
-        nextToken
-        startedAt
-        __typename
-      }
       type
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -262,146 +204,9 @@ export const deleteCar = /* GraphQL */ `
       model
       year
       price
-      CarsToPlayers {
-        nextToken
-        startedAt
-        __typename
-      }
       type
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-      __typename
-    }
-  }
-`;
-export const createCarPlayer = /* GraphQL */ `
-  mutation CreateCarPlayer(
-    $input: CreateCarPlayerInput!
-    $condition: ModelCarPlayerConditionInput
-  ) {
-    createCarPlayer(input: $input, condition: $condition) {
-      id
-      playerId
-      carId
-      player {
-        id
-        nickname
-        money
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        __typename
-      }
-      car {
-        id
-        make
-        model
-        year
-        price
-        type
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-      __typename
-    }
-  }
-`;
-export const updateCarPlayer = /* GraphQL */ `
-  mutation UpdateCarPlayer(
-    $input: UpdateCarPlayerInput!
-    $condition: ModelCarPlayerConditionInput
-  ) {
-    updateCarPlayer(input: $input, condition: $condition) {
-      id
-      playerId
-      carId
-      player {
-        id
-        nickname
-        money
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        __typename
-      }
-      car {
-        id
-        make
-        model
-        year
-        price
-        type
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-      __typename
-    }
-  }
-`;
-export const deleteCarPlayer = /* GraphQL */ `
-  mutation DeleteCarPlayer(
-    $input: DeleteCarPlayerInput!
-    $condition: ModelCarPlayerConditionInput
-  ) {
-    deleteCarPlayer(input: $input, condition: $condition) {
-      id
-      playerId
-      carId
-      player {
-        id
-        nickname
-        money
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        __typename
-      }
-      car {
-        id
-        make
-        model
-        year
-        price
-        type
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }

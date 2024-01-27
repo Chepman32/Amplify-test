@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Amplify } from "aws-amplify";
-import AuctionPage from "./pages/AuctionPage";
+import AuctionPage from "./pages/AuctionPage/AuctionPage";
 import CustomHeader from "./components/CustomHeader";
 import { Authenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
@@ -8,84 +8,88 @@ import "@aws-amplify/ui-react/styles.css";
 import awsExports from "./aws-exports";
 import { Hub } from "aws-amplify/utils";
 import { generateClient } from "aws-amplify/api";
-import { listPlayers } from "./graphql/queries";
-import { createPlayer } from "./graphql/mutations";
+import { listPlayers, listUsers } from "./graphql/queries";
+import { createUser } from "./graphql/mutations";
 import { Route, Routes } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
 import CarsPage from "./pages/CarsPage/CarsPage";
+import { Spin, message } from "antd";
+import { getCurrentUser } from "aws-amplify/auth";
+
+async function currentAuthenticatedUser() {
+  try {
+    const { username, userId, signInDetails } = await getCurrentUser();
+    const playersData = await client.graphql({ query: listUsers });
+    const playersList = playersData.data.listUsers.items;
+    const user = playersList.filter((u) => u.nickname === username)[0];
+    console.log(playersList);
+    return user;
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 const client = generateClient();
 
 Amplify.configure(awsExports);
 
 export default function App() {
-  const [nickname, setNickname] = useState("");
-  const [money, setMoney] = useState(0);
-  const [players, setPlayers] = useState([]);
+  const [nickname, setNickname] = useState();
+  const [money, setMoney] = useState();
   const [playerInfo, setPlayerInfo] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const listPlayersFunc = async () => {
-    const playersData = await client.graphql({ query: listPlayers });
-    const playersList = playersData.data.listPlayers.items;
-    setPlayers(playersList);
-  };
-
-  async function createNewPlayer(userId, username) {
+  async function createNewPlayer(username) {
     const data = {
-      userId,
       nickname: username,
       money: 1000,
     };
     await client.graphql({
-      query: createPlayer,
+      query: createUser,
       variables: { input: data },
     });
-
-    setMoney(1000);
+    message.success("User successfully created");
   }
 
   useEffect(() => {
-    let isDataFetched = false;
-  
-    const fetchData = async () => {
-      if (!isDataFetched) {
-        !players.length && (await listPlayersFunc());
-        isDataFetched = true;
-  
-        const currentPlayer = players.find((pl) => pl.nickname === nickname);
-        if (currentPlayer) {
-          setPlayerInfo(currentPlayer);
-          playerInfo && setMoney(currentPlayer.money);
-        }
+    const fetchPlayerInfo = async () => {
+      try {
+        const info = await currentAuthenticatedUser();
+        setPlayerInfo(info);
+        !money && setMoney(info.money);
+      } catch (error) {
+        console.error("Error fetching player info:", error);
       }
     };
-  
+
+    fetchPlayerInfo();
+  }, [money]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setLoading(false);
+    };
     fetchData();
-    
-  }, [nickname, playerInfo, players]);
-  
+  }, []);
 
   const listener = async (data) => {
-    const nicknames = players.map((pl) => pl.nickname);
-    const isNewUser = !nicknames.includes(data?.payload?.data?.nickname);
-    if (
-      !isNewUser &&
-      data.payload.event === "signedIn" &&
-      data?.payload?.data?.userId.length &&
-      data?.payload?.data?.username.length
-    ) {
-      createNewPlayer(
-        data?.payload?.data?.userId,
+    if (data.payload.event === "signedIn") {
+      const playersData = await client.graphql({ query: listUsers });
+      const playersList = playersData.data.listUsers.items;
+      const isNewUser = playersList.filter(
+        (u) => u.nickname === data?.payload?.data?.nickname
+      )[0];
+      console.log(playersList, isNewUser);
+      if (isNewUser) {
+        createNewPlayer(data?.payload?.data?.username);
+      }
+      setNickname(data?.payload?.data?.username);
+      localStorage.setItem(
+        "CAR_AUCTION_NICKNAME",
         data?.payload?.data?.username
       );
     }
-    const currentPlayer = players.find(
-      (pl) => pl.nickname === data?.payload?.data?.username
-    );
-    setPlayerInfo(currentPlayer);
-    setNickname(data?.payload?.data?.username);
-    currentPlayer && setMoney(currentPlayer.money);
-    localStorage.setItem("CAR_AUCTION_NICKNAME", data?.payload?.data?.username);
   };
 
   Hub.listen("auth", listener);
@@ -95,35 +99,39 @@ export default function App() {
       <Authenticator>
         {({ signOut, user }) => (
           <>
-            {
-              playerInfo !== null && <main>
-              <CustomHeader money={money} username={user} />
-              <h2>{money} </h2>
-              <Routes>
-                <Route
-                  path="/cars"
-                  element={
-                    <CarsPage
-                    playerInfo={playerInfo}
-                      money={money}
-                      setMoney={setMoney}
-                    />
-                  }
-                />
-                <Route
-                  path="/auctions"
-                  element={
-                    <AuctionPage
-                      playerInfo={playerInfo}
-                      money={money}
-                      setMoney={setMoney}
-                    />
-                  }
-                />
-              </Routes>
-            </main>
-            
-            }
+            {nickname !== null && (
+              <main>
+                {playerInfo && (
+                  <CustomHeader
+                    money={playerInfo.money}
+                    username={playerInfo.nickname}
+                  />
+                )}
+                <h2>{money} </h2>
+                <Routes>
+                  <Route
+                    path="/cars"
+                    element={
+                      <CarsPage
+                        playerInfo={playerInfo}
+                        money={money}
+                        setMoney={setMoney}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/auctions"
+                    element={
+                      <AuctionPage
+                        playerInfo={playerInfo}
+                        money={money}
+                        setMoney={setMoney}
+                      />
+                    }
+                  />
+                </Routes>
+              </main>
+            )}
             <button onClick={signOut}>Sign out</button>
           </>
         )}

@@ -181,8 +181,8 @@ export const schema = {
                 }
             ]
         },
-        "Player": {
-            "name": "Player",
+        "User": {
+            "name": "User",
             "fields": {
                 "id": {
                     "name": "id",
@@ -197,22 +197,6 @@ export const schema = {
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
-                },
-                "cars": {
-                    "name": "cars",
-                    "isArray": true,
-                    "type": {
-                        "model": "CarPlayer"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": [
-                            "player"
-                        ]
-                    }
                 },
                 "money": {
                     "name": "money",
@@ -239,7 +223,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "Players",
+            "pluralName": "Users",
             "attributes": [
                 {
                     "type": "model",
@@ -301,22 +285,6 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "CarsToPlayers": {
-                    "name": "CarsToPlayers",
-                    "isArray": true,
-                    "type": {
-                        "model": "CarPlayer"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": [
-                            "car"
-                        ]
-                    }
-                },
                 "type": {
                     "name": "type",
                     "isArray": false,
@@ -365,108 +333,10 @@ export const schema = {
                     }
                 }
             ]
-        },
-        "CarPlayer": {
-            "name": "CarPlayer",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "playerId": {
-                    "name": "playerId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "carId": {
-                    "name": "carId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "player": {
-                    "name": "player",
-                    "isArray": false,
-                    "type": {
-                        "model": "Player"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "playerId"
-                        ]
-                    }
-                },
-                "car": {
-                    "name": "car",
-                    "isArray": false,
-                    "type": {
-                        "model": "Car"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetNames": [
-                            "carId"
-                        ]
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "CarPlayers",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byPlayer",
-                        "fields": [
-                            "playerId"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byCar",
-                        "fields": [
-                            "carId"
-                        ]
-                    }
-                }
-            ]
         }
     },
     "enums": {},
     "nonModels": {},
     "codegenVersion": "3.4.4",
-    "version": "50bef5a43ee1c4fac902584c316ae54a"
+    "version": "789bb102048d5766800f83f74c513b3c"
 };

@@ -3,9 +3,10 @@ import { Hub } from 'aws-amplify/utils';
 import "@aws-amplify/ui-react/styles.css";
 import { Modal, Form, Input, Button, Card, Col, Row, Typography, Space, Spin, Flex, Select, message } from "antd";
 import { generateClient } from 'aws-amplify/api';
-import * as mutations from '../graphql/mutations';
-import { listAuctions as listAuctionsQuery } from '../graphql/queries';
-import { calculateTimeDifference } from "../functions"
+import * as mutations from '../../graphql/mutations';
+import { listAuctions as listAuctionsQuery } from '../../graphql/queries';
+import { calculateTimeDifference } from "../../functions"
+import AuctionPageItem from "./AuctionPageItem";
 
 const { Option } = Select;
 const client = generateClient();
@@ -89,7 +90,7 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
     try {
       setLoadingBid(true);
       const increasedBidValue = Math.floor(auction.currentBid * 1.1) || Math.round(auction.minBid * 1.1)
-
+      setMoney(auction.lastBidPlayer === playerInfo.nickname ? money - (increasedBidValue - auction.currentBid) : money - increasedBidValue)
       const updatedAuction = {
         id: auction.id,
         carName: auction.carName,
@@ -101,14 +102,12 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
         lastBidPlayer: playerInfo.nickname,
         status: increasedBidValue < auction.buy ? "active" : "finished",
       };
-
-
       await client.graphql({
         query: mutations.updateAuction,
         variables: { input: updatedAuction },
       });
       await client.graphql({
-        query: mutations.updatePlayer,
+        query: mutations.updateUser,
         variables: {
           input: {
             id: playerInfo.id,
@@ -150,7 +149,7 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
         variables: { input: updatedAuction },
       });
       await client.graphql({
-        query: mutations.updatePlayer,
+        query: mutations.updateUser,
         variables: {
           input: {
             id: playerInfo.id,
@@ -180,27 +179,13 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <Typography.Title level={1} style={{ textAlign: 'center' }}>Virtual Car Auction</Typography.Title>
+      <Typography.Title level={1} style={{ textAlign: 'center' }} onClick={() => console.log(playerInfo)}>Virtual Car Auction</Typography.Title>
       <Flex justify="center">
         <Button onClick={showModal}>Start auction</Button>
       </Flex>
       <Row gutter={[16, 16]}>
         {auctions.map((auction) => (
-          <Col key={auction.id} span={8}>
-            <Card title={`${auction.player} - ${auction.carName}`}>
-              <Space direction="vertical">
-                <Typography.Text>End Time: {calculateTimeDifference(auction.endTime)}</Typography.Text>
-                <Typography.Text>{auction.currentBid > auction.minBid ? "Current" : "Minimal"} Bid: ${auction.currentBid || auction.minBid}</Typography.Text>
-                <Typography.Text>Buy: ${auction.buy}</Typography.Text>
-                <Button onClick={() => increaseBid(auction)} disabled={loadingBid}>
-                  {loadingBid ? <Spin /> : "Increase Bid"}
-                </Button>
-                <Button onClick={() => buyItem(auction)} disabled={loadingBuy} >
-                {loadingBuy ? <Spin /> : "Buy"}
-                </Button>
-              </Space>
-            </Card>
-          </Col>
+          <AuctionPageItem auction={auction} increaseBid={increaseBid} buyItem={buyItem}/>
         ))}
       </Row>
       <Modal

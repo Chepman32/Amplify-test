@@ -9,13 +9,13 @@ import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
 import { generateClient } from "aws-amplify/api";
-import { getNote } from "../graphql/queries";
-import { updateNote } from "../graphql/mutations";
+import { getUser } from "../graphql/queries";
+import { updateUser } from "../graphql/mutations";
 const client = generateClient();
-export default function NoteUpdateForm(props) {
+export default function UserUpdateForm(props) {
   const {
     id: idProp,
-    note: noteModelProp,
+    user: userModelProp,
     onSuccess,
     onError,
     onSubmit,
@@ -25,45 +25,39 @@ export default function NoteUpdateForm(props) {
     ...rest
   } = props;
   const initialValues = {
-    name: "",
-    description: "",
-    image: "",
+    nickname: "",
+    money: "",
   };
-  const [name, setName] = React.useState(initialValues.name);
-  const [description, setDescription] = React.useState(
-    initialValues.description
-  );
-  const [image, setImage] = React.useState(initialValues.image);
+  const [nickname, setNickname] = React.useState(initialValues.nickname);
+  const [money, setMoney] = React.useState(initialValues.money);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
-    const cleanValues = noteRecord
-      ? { ...initialValues, ...noteRecord }
+    const cleanValues = userRecord
+      ? { ...initialValues, ...userRecord }
       : initialValues;
-    setName(cleanValues.name);
-    setDescription(cleanValues.description);
-    setImage(cleanValues.image);
+    setNickname(cleanValues.nickname);
+    setMoney(cleanValues.money);
     setErrors({});
   };
-  const [noteRecord, setNoteRecord] = React.useState(noteModelProp);
+  const [userRecord, setUserRecord] = React.useState(userModelProp);
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
         ? (
             await client.graphql({
-              query: getNote.replaceAll("__typename", ""),
+              query: getUser.replaceAll("__typename", ""),
               variables: { id: idProp },
             })
-          )?.data?.getNote
-        : noteModelProp;
-      setNoteRecord(record);
+          )?.data?.getUser
+        : userModelProp;
+      setUserRecord(record);
     };
     queryData();
-  }, [idProp, noteModelProp]);
-  React.useEffect(resetStateValues, [noteRecord]);
+  }, [idProp, userModelProp]);
+  React.useEffect(resetStateValues, [userRecord]);
   const validations = {
-    name: [],
-    description: [],
-    image: [],
+    nickname: [],
+    money: [],
   };
   const runValidationTasks = async (
     fieldName,
@@ -91,9 +85,8 @@ export default function NoteUpdateForm(props) {
       onSubmit={async (event) => {
         event.preventDefault();
         let modelFields = {
-          name: name ?? null,
-          description: description ?? null,
-          image: image ?? null,
+          nickname: nickname ?? null,
+          money: money ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -124,10 +117,10 @@ export default function NoteUpdateForm(props) {
             }
           });
           await client.graphql({
-            query: updateNote.replaceAll("__typename", ""),
+            query: updateUser.replaceAll("__typename", ""),
             variables: {
               input: {
-                id: noteRecord.id,
+                id: userRecord.id,
                 ...modelFields,
               },
             },
@@ -142,86 +135,62 @@ export default function NoteUpdateForm(props) {
           }
         }
       }}
-      {...getOverrideProps(overrides, "NoteUpdateForm")}
+      {...getOverrideProps(overrides, "UserUpdateForm")}
       {...rest}
     >
       <TextField
-        label="Name"
+        label="Nickname"
         isRequired={false}
         isReadOnly={false}
-        value={name}
+        value={nickname}
         onChange={(e) => {
           let { value } = e.target;
           if (onChange) {
             const modelFields = {
-              name: value,
-              description,
-              image,
+              nickname: value,
+              money,
             };
             const result = onChange(modelFields);
-            value = result?.name ?? value;
+            value = result?.nickname ?? value;
           }
-          if (errors.name?.hasError) {
-            runValidationTasks("name", value);
+          if (errors.nickname?.hasError) {
+            runValidationTasks("nickname", value);
           }
-          setName(value);
+          setNickname(value);
         }}
-        onBlur={() => runValidationTasks("name", name)}
-        errorMessage={errors.name?.errorMessage}
-        hasError={errors.name?.hasError}
-        {...getOverrideProps(overrides, "name")}
+        onBlur={() => runValidationTasks("nickname", nickname)}
+        errorMessage={errors.nickname?.errorMessage}
+        hasError={errors.nickname?.hasError}
+        {...getOverrideProps(overrides, "nickname")}
       ></TextField>
       <TextField
-        label="Description"
+        label="Money"
         isRequired={false}
         isReadOnly={false}
-        value={description}
+        type="number"
+        step="any"
+        value={money}
         onChange={(e) => {
-          let { value } = e.target;
+          let value = isNaN(parseInt(e.target.value))
+            ? e.target.value
+            : parseInt(e.target.value);
           if (onChange) {
             const modelFields = {
-              name,
-              description: value,
-              image,
+              nickname,
+              money: value,
             };
             const result = onChange(modelFields);
-            value = result?.description ?? value;
+            value = result?.money ?? value;
           }
-          if (errors.description?.hasError) {
-            runValidationTasks("description", value);
+          if (errors.money?.hasError) {
+            runValidationTasks("money", value);
           }
-          setDescription(value);
+          setMoney(value);
         }}
-        onBlur={() => runValidationTasks("description", description)}
-        errorMessage={errors.description?.errorMessage}
-        hasError={errors.description?.hasError}
-        {...getOverrideProps(overrides, "description")}
-      ></TextField>
-      <TextField
-        label="Image"
-        isRequired={false}
-        isReadOnly={false}
-        value={image}
-        onChange={(e) => {
-          let { value } = e.target;
-          if (onChange) {
-            const modelFields = {
-              name,
-              description,
-              image: value,
-            };
-            const result = onChange(modelFields);
-            value = result?.image ?? value;
-          }
-          if (errors.image?.hasError) {
-            runValidationTasks("image", value);
-          }
-          setImage(value);
-        }}
-        onBlur={() => runValidationTasks("image", image)}
-        errorMessage={errors.image?.errorMessage}
-        hasError={errors.image?.hasError}
-        {...getOverrideProps(overrides, "image")}
+        onBlur={() => runValidationTasks("money", money)}
+        errorMessage={errors.money?.errorMessage}
+        hasError={errors.money?.hasError}
+        {...getOverrideProps(overrides, "money")}
       ></TextField>
       <Flex
         justifyContent="space-between"
@@ -234,7 +203,7 @@ export default function NoteUpdateForm(props) {
             event.preventDefault();
             resetStateValues();
           }}
-          isDisabled={!(idProp || noteModelProp)}
+          isDisabled={!(idProp || userModelProp)}
           {...getOverrideProps(overrides, "ResetButton")}
         ></Button>
         <Flex
@@ -246,7 +215,7 @@ export default function NoteUpdateForm(props) {
             type="submit"
             variation="primary"
             isDisabled={
-              !(idProp || noteModelProp) ||
+              !(idProp || userModelProp) ||
               Object.values(errors).some((e) => e?.hasError)
             }
             {...getOverrideProps(overrides, "SubmitButton")}

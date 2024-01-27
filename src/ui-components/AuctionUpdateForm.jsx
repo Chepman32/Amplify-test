@@ -7,9 +7,11 @@
 /* eslint-disable */
 import * as React from "react";
 import { Button, Flex, Grid, TextField } from "@aws-amplify/ui-react";
-import { Auction } from "../models";
 import { fetchByPath, getOverrideProps, validateField } from "./utils";
-import { DataStore } from "aws-amplify/datastore";
+import { generateClient } from "aws-amplify/api";
+import { getAuction } from "../graphql/queries";
+import { updateAuction } from "../graphql/mutations";
+const client = generateClient();
 export default function AuctionUpdateForm(props) {
   const {
     id: idProp,
@@ -61,7 +63,12 @@ export default function AuctionUpdateForm(props) {
   React.useEffect(() => {
     const queryData = async () => {
       const record = idProp
-        ? await DataStore.query(Auction, idProp)
+        ? (
+            await client.graphql({
+              query: getAuction.replaceAll("__typename", ""),
+              variables: { id: idProp },
+            })
+          )?.data?.getAuction
         : auctionModelProp;
       setAuctionRecord(record);
     };
@@ -108,10 +115,10 @@ export default function AuctionUpdateForm(props) {
           player,
           buy,
           minBid,
-          currentBid,
+          currentBid: currentBid ?? null,
           endTime,
           status,
-          lastBidPlayer,
+          lastBidPlayer: lastBidPlayer ?? null,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -141,17 +148,22 @@ export default function AuctionUpdateForm(props) {
               modelFields[key] = null;
             }
           });
-          await DataStore.save(
-            Auction.copyOf(auctionRecord, (updated) => {
-              Object.assign(updated, modelFields);
-            })
-          );
+          await client.graphql({
+            query: updateAuction.replaceAll("__typename", ""),
+            variables: {
+              input: {
+                id: auctionRecord.id,
+                ...modelFields,
+              },
+            },
+          });
           if (onSuccess) {
             onSuccess(modelFields);
           }
         } catch (err) {
           if (onError) {
-            onError(modelFields, err.message);
+            const messages = err.errors.map((e) => e.message).join("\n");
+            onError(modelFields, messages);
           }
         }
       }}

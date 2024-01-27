@@ -1,6 +1,6 @@
 import { ModelInit, MutableModel, __modelMeta__, ManagedIdentifier } from "@aws-amplify/datastore";
 // @ts-ignore
-import { LazyLoading, LazyLoadingDisabled, AsyncCollection, AsyncItem } from "@aws-amplify/datastore";
+import { LazyLoading, LazyLoadingDisabled } from "@aws-amplify/datastore";
 
 
 
@@ -80,36 +80,34 @@ export declare const Auction: (new (init: ModelInit<Auction>) => Auction) & {
   copyOf(source: Auction, mutator: (draft: MutableModel<Auction>) => MutableModel<Auction> | void): Auction;
 }
 
-type EagerPlayer = {
+type EagerUser = {
   readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<Player, 'id'>;
+    identifier: ManagedIdentifier<User, 'id'>;
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
   readonly nickname?: string | null;
-  readonly cars?: (CarPlayer | null)[] | null;
   readonly money?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
-type LazyPlayer = {
+type LazyUser = {
   readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<Player, 'id'>;
+    identifier: ManagedIdentifier<User, 'id'>;
     readOnlyFields: 'createdAt' | 'updatedAt';
   };
   readonly id: string;
   readonly nickname?: string | null;
-  readonly cars: AsyncCollection<CarPlayer>;
   readonly money?: number | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
-export declare type Player = LazyLoading extends LazyLoadingDisabled ? EagerPlayer : LazyPlayer
+export declare type User = LazyLoading extends LazyLoadingDisabled ? EagerUser : LazyUser
 
-export declare const Player: (new (init: ModelInit<Player>) => Player) & {
-  copyOf(source: Player, mutator: (draft: MutableModel<Player>) => MutableModel<Player> | void): Player;
+export declare const User: (new (init: ModelInit<User>) => User) & {
+  copyOf(source: User, mutator: (draft: MutableModel<User>) => MutableModel<User> | void): User;
 }
 
 type EagerCar = {
@@ -122,7 +120,6 @@ type EagerCar = {
   readonly model: string;
   readonly year: number;
   readonly price: number;
-  readonly CarsToPlayers?: (CarPlayer | null)[] | null;
   readonly type?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -138,7 +135,6 @@ type LazyCar = {
   readonly model: string;
   readonly year: number;
   readonly price: number;
-  readonly CarsToPlayers: AsyncCollection<CarPlayer>;
   readonly type?: string | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
@@ -148,38 +144,4 @@ export declare type Car = LazyLoading extends LazyLoadingDisabled ? EagerCar : L
 
 export declare const Car: (new (init: ModelInit<Car>) => Car) & {
   copyOf(source: Car, mutator: (draft: MutableModel<Car>) => MutableModel<Car> | void): Car;
-}
-
-type EagerCarPlayer = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<CarPlayer, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly playerId?: string | null;
-  readonly carId?: string | null;
-  readonly player: Player;
-  readonly car: Car;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-type LazyCarPlayer = {
-  readonly [__modelMeta__]: {
-    identifier: ManagedIdentifier<CarPlayer, 'id'>;
-    readOnlyFields: 'createdAt' | 'updatedAt';
-  };
-  readonly id: string;
-  readonly playerId?: string | null;
-  readonly carId?: string | null;
-  readonly player: AsyncItem<Player>;
-  readonly car: AsyncItem<Car>;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-export declare type CarPlayer = LazyLoading extends LazyLoadingDisabled ? EagerCarPlayer : LazyCarPlayer
-
-export declare const CarPlayer: (new (init: ModelInit<CarPlayer>) => CarPlayer) & {
-  copyOf(source: CarPlayer, mutator: (draft: MutableModel<CarPlayer>) => MutableModel<CarPlayer> | void): CarPlayer;
 }

@@ -6,7 +6,6 @@
 
 import * as React from "react";
 import { GridProps, TextFieldProps } from "@aws-amplify/ui-react";
-import { Auction } from "../models";
 export declare type EscapeHatchProps = {
     [elementHierarchy: string]: Record<string, unknown>;
 } | null;
@@ -58,7 +57,7 @@ export declare type AuctionUpdateFormProps = React.PropsWithChildren<{
     overrides?: AuctionUpdateFormOverridesProps | undefined | null;
 } & {
     id?: string;
-    auction?: Auction;
+    auction?: any;
     onSubmit?: (fields: AuctionUpdateFormInputValues) => AuctionUpdateFormInputValues;
     onSuccess?: (fields: AuctionUpdateFormInputValues) => void;
     onError?: (fields: AuctionUpdateFormInputValues, errorMessage: string) => void;

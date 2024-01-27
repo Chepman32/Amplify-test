@@ -3,29 +3,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, Button, Modal, Form, Input, message, Spin, Select, Flex } from "antd";
 import { generateClient } from 'aws-amplify/api';
-import { getCarPlayer, getPlayer, listCars as listCarsQuery } from '../../graphql/queries';
+import { Cache } from 'aws-amplify/utils';
+import { getPlayer, listCars as listCarsQuery } from '../../graphql/queries';
 import * as mutations from '../../graphql/mutations';
 import "./carsPage.css";
 import CarDetailsModal from "./CarDetailsModal";
 import CarCard from "./CarCard";
 
-export const getUserQuery = `
-  query getUser($id: ID!) {
-    getUser(id: $id) {
-      id
-      nickname
-      cars {
-        id
-        make
-        model
-        year
-        price
-        type
-      }
-    }
-  }
-`; 
-const { Meta } = Card;
 const { Option } = Select;
 const client = generateClient();
 
@@ -46,35 +30,17 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
     }
   }, []);
 
-  const fetchUserCars = useCallback(async () => {
-    try {
-      const carData = await client.graphql({
-        query: getCarPlayer,
-        variables: { id: playerInfo.userId }
-      });
-      console.log(carData);
-    } catch (error) {
-      console.error("Error fetching cars:", error);
-    }
-  }, [playerInfo.userId]);
-  
+  useEffect(() => {
+    fetchCars()
+  },[fetchCars])
 
   const buyCar = async (car) => {
     setMoney(money - car.price);
     try {
       setLoadingBuy(true)
+      
       await client.graphql({
-        query: mutations.createCarPlayer,
-        variables: {
-          input: {
-            playerId: playerInfo.id,
-            carId: car.id
-          }
-        }
-      });
-
-      await client.graphql({
-        query: mutations.updatePlayer,
+        query: mutations.updateUser,
         variables: {
           input: {
             id: playerInfo.id,
@@ -94,11 +60,6 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
     }
   };
 
-  useEffect(() => {
-    fetchCars();
-    fetchUserCars()
-  }, [fetchCars, fetchUserCars]);
-
   const showModal = () => {
     setVisible(true);
   };
@@ -116,30 +77,27 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
   };
 
   const createNewCar = async (values) => {
-    try {
-      const newCar = {
-        make: values.make,
-        model: values.model,
-        year: values.year,
-        price: values.price,
-        type: values.type, // Added type property
-      };
+    const newCar = {
+      make: values.make,
+      model: values.model,
+      year: parseInt(values.year), // Convert to integer
+      price: parseInt(values.price), // Convert to integer
+      type: values.type,
+    };
+    await client.graphql({
+      query: mutations.createCar,
+      variables: { input: newCar },
+    });
+    // Wait for fetchCars to complete before hiding the modal
+    await fetchCars();
 
-      await client.graphql({
-        query: mutations.createCar,
-        variables: { input: newCar },
-      });
-
-      fetchCars();
-      setVisible(false);
-      message.success('Car created successfully!');
-    } catch (error) {
-      console.error('Error creating a new car', error);
-    }
+    setVisible(false);
+    form.resetFields(); // Reset the form after creating a car
+    message.success('Car created successfully!');
   };
-
+  
   const getImageSource = (make, model) => {
-    const imageName = `${make} ${model}.png`;
+    const imageName = `${model}.png`;
     return require(`../../assets/images/${imageName}`);
   };
 
@@ -164,8 +122,7 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
           form
             .validateFields()
             .then((values) => {
-              form.resetFields();
-              createNewCar(values);
+              createNewCar(values); // Move the createNewCar call inside the then block
             })
             .catch((info) => {
               console.log('Validate Failed:', info);

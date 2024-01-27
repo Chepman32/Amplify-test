@@ -3,6 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@aws-amplify/analytics": "^7.0.13",
+    "@aws-amplify/api": "^6.0.13",
+    "@aws-amplify/auth": "^6.0.13",
+    "@aws-amplify/core": "^6.0.13",
+    "@aws-amplify/datastore": "^5.0.13",
+    "@aws-amplify/storage": "^6.0.13",
     "@aws-amplify/ui-react": "^6.1.1",
     "@aws-amplify/ui-react-storage": "^3.0.10",
     "@emotion/react": "^11.11.3",

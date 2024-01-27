@@ -10,9 +10,6 @@ export const onCreateNote = /* GraphQL */ `
       image
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -26,9 +23,6 @@ export const onUpdateNote = /* GraphQL */ `
       image
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -42,9 +36,6 @@ export const onDeleteNote = /* GraphQL */ `
       image
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -63,9 +54,6 @@ export const onCreateAuction = /* GraphQL */ `
       lastBidPlayer
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -84,9 +72,6 @@ export const onUpdateAuction = /* GraphQL */ `
       lastBidPlayer
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -105,69 +90,42 @@ export const onDeleteAuction = /* GraphQL */ `
       lastBidPlayer
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
 `;
-export const onCreatePlayer = /* GraphQL */ `
-  subscription OnCreatePlayer($filter: ModelSubscriptionPlayerFilterInput) {
-    onCreatePlayer(filter: $filter) {
+export const onCreateUser = /* GraphQL */ `
+  subscription OnCreateUser($filter: ModelSubscriptionUserFilterInput) {
+    onCreateUser(filter: $filter) {
       id
       nickname
-      cars {
-        nextToken
-        startedAt
-        __typename
-      }
       money
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
 `;
-export const onUpdatePlayer = /* GraphQL */ `
-  subscription OnUpdatePlayer($filter: ModelSubscriptionPlayerFilterInput) {
-    onUpdatePlayer(filter: $filter) {
+export const onUpdateUser = /* GraphQL */ `
+  subscription OnUpdateUser($filter: ModelSubscriptionUserFilterInput) {
+    onUpdateUser(filter: $filter) {
       id
       nickname
-      cars {
-        nextToken
-        startedAt
-        __typename
-      }
       money
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
 `;
-export const onDeletePlayer = /* GraphQL */ `
-  subscription OnDeletePlayer($filter: ModelSubscriptionPlayerFilterInput) {
-    onDeletePlayer(filter: $filter) {
+export const onDeleteUser = /* GraphQL */ `
+  subscription OnDeleteUser($filter: ModelSubscriptionUserFilterInput) {
+    onDeleteUser(filter: $filter) {
       id
       nickname
-      cars {
-        nextToken
-        startedAt
-        __typename
-      }
       money
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -180,17 +138,9 @@ export const onCreateCar = /* GraphQL */ `
       model
       year
       price
-      CarsToPlayers {
-        nextToken
-        startedAt
-        __typename
-      }
       type
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -203,17 +153,9 @@ export const onUpdateCar = /* GraphQL */ `
       model
       year
       price
-      CarsToPlayers {
-        nextToken
-        startedAt
-        __typename
-      }
       type
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
@@ -226,143 +168,9 @@ export const onDeleteCar = /* GraphQL */ `
       model
       year
       price
-      CarsToPlayers {
-        nextToken
-        startedAt
-        __typename
-      }
       type
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-      __typename
-    }
-  }
-`;
-export const onCreateCarPlayer = /* GraphQL */ `
-  subscription OnCreateCarPlayer(
-    $filter: ModelSubscriptionCarPlayerFilterInput
-  ) {
-    onCreateCarPlayer(filter: $filter) {
-      id
-      playerId
-      carId
-      player {
-        id
-        nickname
-        money
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        __typename
-      }
-      car {
-        id
-        make
-        model
-        year
-        price
-        type
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-      __typename
-    }
-  }
-`;
-export const onUpdateCarPlayer = /* GraphQL */ `
-  subscription OnUpdateCarPlayer(
-    $filter: ModelSubscriptionCarPlayerFilterInput
-  ) {
-    onUpdateCarPlayer(filter: $filter) {
-      id
-      playerId
-      carId
-      player {
-        id
-        nickname
-        money
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        __typename
-      }
-      car {
-        id
-        make
-        model
-        year
-        price
-        type
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
-      __typename
-    }
-  }
-`;
-export const onDeleteCarPlayer = /* GraphQL */ `
-  subscription OnDeleteCarPlayer(
-    $filter: ModelSubscriptionCarPlayerFilterInput
-  ) {
-    onDeleteCarPlayer(filter: $filter) {
-      id
-      playerId
-      carId
-      player {
-        id
-        nickname
-        money
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        __typename
-      }
-      car {
-        id
-        make
-        model
-        year
-        price
-        type
-        createdAt
-        updatedAt
-        _version
-        _deleted
-        _lastChangedAt
-        __typename
-      }
-      createdAt
-      updatedAt
-      _version
-      _deleted
-      _lastChangedAt
       __typename
     }
   }
