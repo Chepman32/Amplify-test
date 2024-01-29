@@ -1,0 +1,10 @@
+/* AuctionPage.css */
+
+.auction-items-container {
+    max-height: 70vh; /* Set a fixed height for the container */
+    overflow-y: auto; /* Enable vertical scroll when items overflow */
+  }
+  
+  .auctionDetails h3 {
+    font-size: 2.5vh;
+  }

@@ -1,41 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Hub } from 'aws-amplify/utils';
 import "@aws-amplify/ui-react/styles.css";
-import { Modal, Form, Input, Button, Card, Col, Row, Typography, Space, Spin, Flex, Select, message } from "antd";
+import { Modal, Form, Input, Button, Card, Col, Row, Typography, Flex, Select, message } from "antd";
 import { generateClient } from 'aws-amplify/api';
 import * as mutations from '../../graphql/mutations';
 import { listAuctions as listAuctionsQuery } from '../../graphql/queries';
 import { calculateTimeDifference } from "../../functions"
 import AuctionPageItem from "./AuctionPageItem";
+import { SelectedAuctionDetails } from "./SelectedAuctionDetails";
+import "./auctionPage.css"
 
 const { Option } = Select;
 const client = generateClient();
-
-const getImageSource = (make, model) => {
-    const imageName = `${make} ${model}.png`;
-    return require(`../../assets/images/${imageName}`);
-};
-
-const SelectedAuctionDetails = ({ selectedAuction }) => {
-
-  return (
-      <Col span={12} style={{ height: '100%', padding: '20px' }}>
-          {selectedAuction && (
-              <Card title={`${selectedAuction.player} - ${selectedAuction.carName}`} style={{ height: '100%' }}>
-                  <Space direction="vertical">
-                      <Typography.Text>
-                          Bid: ${selectedAuction.currentBid || selectedAuction.minBid}
-                      </Typography.Text>
-                      <Typography.Text>
-                          Buy: ${selectedAuction.buy}
-                      </Typography.Text>
-                      <img src={require("../../assets/images/Ford Focus.png")} alt="Auction" style={{ maxWidth: '100%', maxHeight: '70%' }}/>
-                  </Space>
-              </Card>
-          )}
-      </Col>
-  );
-};
 
 export default function AuctionPage({ playerInfo, setMoney, money }) {
   const [auctions, setAuctions] = useState([]);
@@ -45,7 +21,6 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
   const [loadingBid, setLoadingBid] = useState(false);
   const [loadingBuy, setLoadingBuy] = useState(false);
   const [form] = Form.useForm();
-  const [selectedAuctionIndex, setSelectedAuctionIndex] = useState(0);
   const [selectedAuction, setSelectedAuction] = useState(null);
 
   const showModal = () => {
@@ -71,7 +46,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
       });
 
       setAuctions(auctions);
-      auctions.length > 0 && setSelectedAuction(auctions[0]) && selectedAuctionIndex(1)
+      auctions.length > 0 && !selectedAuction && setSelectedAuction(auctions[0]);
     } catch (error) {
       console.error("Error fetching auctions:", error);
     }
@@ -207,9 +182,15 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
 
   const handleKeyDown = (e) => {
     if (e.key === "ArrowUp") {
-      setSelectedAuctionIndex((prevIndex) => (prevIndex === null ? 0 : Math.max(0, prevIndex - 1)));
+      setSelectedAuction((prevAuction) => {
+        const newIndex = auctions.indexOf(prevAuction) - 1;
+        return newIndex >= 0 ? auctions[newIndex] : prevAuction;
+      });
     } else if (e.key === "ArrowDown") {
-      setSelectedAuctionIndex((prevIndex) => (prevIndex === null ? 0 : Math.min(auctions.length - 1, prevIndex + 1)));
+      setSelectedAuction((prevAuction) => {
+        const newIndex = auctions.indexOf(prevAuction) + 1;
+        return newIndex < auctions.length ? auctions[newIndex] : prevAuction;
+      });
     }
   };
 
@@ -218,7 +199,7 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [auctions]);
+  }, [auctions, selectedAuction]);
 
   return (
     <div style={{ display: 'flex', padding: '20px' }}>
@@ -227,18 +208,18 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
             <Flex justify="center">
                 <Button onClick={showModal}>Start auction</Button>
             </Flex>
-            <Row gutter={[16, 16]}>
-                {auctions.map((auction, index) => (
-                    <AuctionPageItem
-                        key={auction.id}
-                        auction={auction}
-                        increaseBid={increaseBid}
-                        buyItem={buyItem}
-                        isSelected={index === selectedAuctionIndex}
-                        onClick={() => setSelectedAuction(auction)}
-                    />
-                ))}
-            </Row>
+            <div className="auction-items-container" style={{ flex: 1 }}>
+  {auctions.map((auction) => (
+    <AuctionPageItem
+      key={auction.id}
+      auction={auction}
+      increaseBid={increaseBid}
+      buyItem={buyItem}
+      isSelected={auction === selectedAuction}
+      onClick={() => setSelectedAuction(auction)}
+    />
+  ))}
+</div>
         </div>
         <SelectedAuctionDetails selectedAuction={selectedAuction} />
         <Modal
@@ -271,5 +252,5 @@ export default function AuctionPage({ playerInfo, setMoney, money }) {
             </Form>
         </Modal>
     </div>
-)
+  );
 }
