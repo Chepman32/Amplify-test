@@ -1,6 +1,42 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const onCreateUser = /* GraphQL */ `
+  subscription OnCreateUser($filter: ModelSubscriptionUserFilterInput) {
+    onCreateUser(filter: $filter) {
+      id
+      nickname
+      money
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onUpdateUser = /* GraphQL */ `
+  subscription OnUpdateUser($filter: ModelSubscriptionUserFilterInput) {
+    onUpdateUser(filter: $filter) {
+      id
+      nickname
+      money
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
+export const onDeleteUser = /* GraphQL */ `
+  subscription OnDeleteUser($filter: ModelSubscriptionUserFilterInput) {
+    onDeleteUser(filter: $filter) {
+      id
+      nickname
+      money
+      createdAt
+      updatedAt
+      __typename
+    }
+  }
+`;
 export const onCreateNote = /* GraphQL */ `
   subscription OnCreateNote($filter: ModelSubscriptionNoteFilterInput) {
     onCreateNote(filter: $filter) {
@@ -88,42 +124,6 @@ export const onDeleteAuction = /* GraphQL */ `
       endTime
       status
       lastBidPlayer
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onCreateUser = /* GraphQL */ `
-  subscription OnCreateUser($filter: ModelSubscriptionUserFilterInput) {
-    onCreateUser(filter: $filter) {
-      id
-      nickname
-      money
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onUpdateUser = /* GraphQL */ `
-  subscription OnUpdateUser($filter: ModelSubscriptionUserFilterInput) {
-    onUpdateUser(filter: $filter) {
-      id
-      nickname
-      money
-      createdAt
-      updatedAt
-      __typename
-    }
-  }
-`;
-export const onDeleteUser = /* GraphQL */ `
-  subscription OnDeleteUser($filter: ModelSubscriptionUserFilterInput) {
-    onDeleteUser(filter: $filter) {
-      id
-      nickname
-      money
       createdAt
       updatedAt
       __typename

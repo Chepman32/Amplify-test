@@ -11,7 +11,33 @@ import AuctionPageItem from "./AuctionPageItem";
 const { Option } = Select;
 const client = generateClient();
 
-const AuctionPage = ({ playerInfo, setMoney, money }) => {
+const getImageSource = (make, model) => {
+    const imageName = `${make} ${model}.png`;
+    return require(`../../assets/images/${imageName}`);
+};
+
+const SelectedAuctionDetails = ({ selectedAuction }) => {
+
+  return (
+      <Col span={12} style={{ height: '100%', padding: '20px' }}>
+          {selectedAuction && (
+              <Card title={`${selectedAuction.player} - ${selectedAuction.carName}`} style={{ height: '100%' }}>
+                  <Space direction="vertical">
+                      <Typography.Text>
+                          Bid: ${selectedAuction.currentBid || selectedAuction.minBid}
+                      </Typography.Text>
+                      <Typography.Text>
+                          Buy: ${selectedAuction.buy}
+                      </Typography.Text>
+                      <img src={require("../../assets/images/Ford Focus.png")} alt="Auction" style={{ maxWidth: '100%', maxHeight: '70%' }}/>
+                  </Space>
+              </Card>
+          )}
+      </Col>
+  );
+};
+
+export default function AuctionPage({ playerInfo, setMoney, money }) {
   const [auctions, setAuctions] = useState([]);
   const [visible, setVisible] = useState(false);
   const [auctionDuration, setAuctionDuration] = useState(1);
@@ -19,6 +45,8 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
   const [loadingBid, setLoadingBid] = useState(false);
   const [loadingBuy, setLoadingBuy] = useState(false);
   const [form] = Form.useForm();
+  const [selectedAuctionIndex, setSelectedAuctionIndex] = useState(0);
+  const [selectedAuction, setSelectedAuction] = useState(null);
 
   const showModal = () => {
     setVisible(true);
@@ -43,6 +71,7 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
       });
 
       setAuctions(auctions);
+      auctions.length > 0 && setSelectedAuction(auctions[0]) && selectedAuctionIndex(1)
     } catch (error) {
       console.error("Error fetching auctions:", error);
     }
@@ -175,50 +204,72 @@ const AuctionPage = ({ playerInfo, setMoney, money }) => {
     listAuctions();
     Hub.listen('auth', listener);
   }, [listAuctions]);
-  
+
+  const handleKeyDown = (e) => {
+    if (e.key === "ArrowUp") {
+      setSelectedAuctionIndex((prevIndex) => (prevIndex === null ? 0 : Math.max(0, prevIndex - 1)));
+    } else if (e.key === "ArrowDown") {
+      setSelectedAuctionIndex((prevIndex) => (prevIndex === null ? 0 : Math.min(auctions.length - 1, prevIndex + 1)));
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [auctions]);
 
   return (
-    <div style={{ padding: '20px' }}>
-      <Typography.Title level={1} style={{ textAlign: 'center' }} onClick={() => console.log(playerInfo)}>Virtual Car Auction</Typography.Title>
-      <Flex justify="center">
-        <Button onClick={showModal}>Start auction</Button>
-      </Flex>
-      <Row gutter={[16, 16]}>
-        {auctions.map((auction) => (
-          <AuctionPageItem auction={auction} increaseBid={increaseBid} buyItem={buyItem}/>
-        ))}
-      </Row>
-      <Modal
-        visible={visible}
-        title="Create a New Auction"
-        okText="Create"
-        cancelText="Cancel"
-        onCancel={handleCancel}
-        onOk={handleOk}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item name="carName" label="Car Name" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="minBid" label="Minimal bid" rules={[{ required: true }]}>
-            <Input type="number" defaultValue={0} />
-          </Form.Item>
-          <Form.Item name="buy" label="Buy" rules={[{ required: true }]}>
-            <Input type="number" defaultValue={0} />
-          </Form.Item>
-          <Form.Item name="auctionDuration" label="Auction Duration (hours)" rules={[{ required: true }]}>
-            <Select value={auctionDuration} onChange={(value) => setAuctionDuration(value)}>
-              <Option value={1}>1 hour</Option>
-              <Option value={3}>3 hours</Option>
-              <Option value={6}>6 hours</Option>
-              <Option value={12}>12 hours</Option>
-              <Option value={24}>24 hours</Option>
-            </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
+    <div style={{ display: 'flex', padding: '20px' }}>
+        <div style={{ flex: 1 }}>
+            <Typography.Title level={1} style={{ textAlign: 'center' }}>Virtual Car Auction</Typography.Title>
+            <Flex justify="center">
+                <Button onClick={showModal}>Start auction</Button>
+            </Flex>
+            <Row gutter={[16, 16]}>
+                {auctions.map((auction, index) => (
+                    <AuctionPageItem
+                        key={auction.id}
+                        auction={auction}
+                        increaseBid={increaseBid}
+                        buyItem={buyItem}
+                        isSelected={index === selectedAuctionIndex}
+                        onClick={() => setSelectedAuction(auction)}
+                    />
+                ))}
+            </Row>
+        </div>
+        <SelectedAuctionDetails selectedAuction={selectedAuction} />
+        <Modal
+            visible={visible}
+            title="Create a New Auction"
+            okText="Create"
+            cancelText="Cancel"
+            onCancel={handleCancel}
+            onOk={handleOk}
+        >
+            <Form form={form} layout="vertical">
+                <Form.Item name="carName" label="Car Name" rules={[{ required: true }]}>
+                    <Input />
+                </Form.Item>
+                <Form.Item name="minBid" label="Minimal bid" rules={[{ required: true }]}>
+                    <Input type="number" defaultValue={0} />
+                </Form.Item>
+                <Form.Item name="buy" label="Buy" rules={[{ required: true }]}>
+                    <Input type="number" defaultValue={0} />
+                </Form.Item>
+                <Form.Item name="auctionDuration" label="Auction Duration (hours)" rules={[{ required: true }]}>
+                    <Select value={auctionDuration} onChange={(value) => setAuctionDuration(value)}>
+                        <Option value={1}>1 hour</Option>
+                        <Option value={3}>3 hours</Option>
+                        <Option value={6}>6 hours</Option>
+                        <Option value={12}>12 hours</Option>
+                        <Option value={24}>24 hours</Option>
+                    </Select>
+                </Form.Item>
+            </Form>
+        </Modal>
     </div>
-  );
-};
-
-export default AuctionPage;
+)
+}

@@ -4,7 +4,7 @@ export function calculateTimeDifference(targetTime) {
     const timeDifferenceInSeconds = Math.floor((targetDateTime - currentTime) / 1000);
   
     if (timeDifferenceInSeconds <= 0) {
-      return "finished";
+      return "Finished";
     } else if (timeDifferenceInSeconds < 60) {
       return "finishing";
     } else if (timeDifferenceInSeconds < 3600) {

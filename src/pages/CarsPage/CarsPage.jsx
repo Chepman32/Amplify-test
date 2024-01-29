@@ -97,7 +97,7 @@ const CarsPage = ({ playerInfo, setMoney, money }) => {
   };
   
   const getImageSource = (make, model) => {
-    const imageName = `${model}.png`;
+    const imageName = `${make} ${model}.png`;
     return require(`../../assets/images/${imageName}`);
   };
 
